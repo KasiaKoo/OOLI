@@ -9,14 +9,14 @@ class Camera_App:
 
         # Get resources
         # ----------------------------------------------------------------------
-        # for testing purposes
+        # for testing. if dummy is true, use laptop webcam instead of server
         self.dummy = dummy
 
         # Connect to video feed
         self.video = VideoCapture(host_ip=host_ip, port=port, dummy=self.dummy)
 
         # It can only really do like 15 fps since it lags
-        self.delay = int(1000/fps)
+        self.delay = 15
 
 
         # Make GUI
@@ -27,21 +27,29 @@ class Camera_App:
         self.canvas = tk.Canvas(window, width=1920, height=1080)
         self.canvas.pack()
 
+
         self.update()
 
         self.window.mainloop()
 
     
     def update(self):
-        frame = self.video.get_data()
 
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        self.photo = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(frame))
-        self.canvas.create_image(0, 0, image=self.photo, anchor=tk.NW)
+        # get frame from camera and place it in window
+        frame = self.video.get_data()
+        self.image = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(frame))
+        self.canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
+
+        # make graph
+        # self.video.make_graph(frame)
+        graph = self.video.make_graph(frame)
+        print(graph.shape)
+        self.graph = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(graph))
+        self.canvas.create_image(100, 110, image=self.graph, anchor=tk.NW)
 
         self.window.after(self.delay, self.update)
 
             
 
 if __name__ == "__main__":
-    Camera_App(tk.Tk(), "Camera App", dummy=True, fps=30, host_ip="10.198.202.145", port=9999)
+    Camera_App(tk.Tk(), "Camera App", dummy=True, fps=30, host_ip="0.0.0.0", port=9999)
