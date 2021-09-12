@@ -13,7 +13,7 @@ class Camera_App:
         self.dummy = dummy
 
         # Connect to video feed
-        self.video = VideoCapture(host_ip=host_ip, port=port)
+        self.video = VideoCapture(host_ip=host_ip, port=port, dummy=self.dummy)
 
         # It can only really do like 15 fps since it lags
         self.delay = int(1000/fps)
@@ -33,10 +33,7 @@ class Camera_App:
 
     
     def update(self):
-        if self.dummy:
-            frame = self.video.get_dummy_data()
-        else:
-            frame = self.video.get_data()
+        frame = self.video.get_data()
 
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         self.photo = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(frame))
@@ -47,4 +44,4 @@ class Camera_App:
             
 
 if __name__ == "__main__":
-    Camera_App(tk.Tk(), "Camera App", dummy=False, fps=30, host_ip="10.198.202.145", port=9999)
+    Camera_App(tk.Tk(), "Camera App", dummy=True, fps=30, host_ip="10.198.202.145", port=9999)

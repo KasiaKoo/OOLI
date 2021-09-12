@@ -26,13 +26,16 @@ import PIL.Image
 #             return None
 
 class VideoCapture:
-    def __init__(self, host_ip="0.0.0.0", port=9999):
+    def __init__(self, host_ip="0.0.0.0", port=9999, dummy=False):
         self.client_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         self.host_ip = host_ip
         self.port = port
         self.data = b""
         self.payload_size = struct.calcsize("Q")
-        self.video = cv2.VideoCapture(0)
+        self.dummy = dummy
+
+        if self.dummy:
+            self.video = cv2.VideoCapture(0)
 
         try:
             self.client_socket.connect((self.host_ip, self.port))
@@ -41,6 +44,10 @@ class VideoCapture:
             pass
 
     def get_data(self):
+        if self.dummy:
+            ret, img = self.video.read()
+            return img
+
         while len(self.data) < self.payload_size:
             packet = self.client_socket.recv(4*1024)
             if not packet: break
@@ -54,8 +61,3 @@ class VideoCapture:
         self.data  = self.data[msg_size:]
         frame = pickle.loads(frame_data)
         return frame
-
-    def get_dummy_data(self):
-        ret, img  = self.video.read()
-        return img
-
