@@ -31,6 +31,7 @@ class VideoCapture:
                 print("Could not connect to server")
                 pass
 
+
     def get_data(self):
 
         # if testing, then return laptop webcam feed
@@ -55,15 +56,25 @@ class VideoCapture:
         frame = pickle.loads(frame_data)
         return frame
 
-    def make_graph(self, frame, axis=0):
+    def make_graph(self, frame, axis=0, dpi=100):
+
+        height, width = frame.shape
+        if axis == 0:
+            figure = plt.figure(figsize=(width/dpi, (width/dpi)/5), dpi=dpi)
+        else:
+            figure = plt.figure(figsize=(height/dpi, (width/dpi)/5), dpi=dpi)
+            
 
         summation = np.sum(frame, axis=axis)
 
-        figure = plt.figure()
         figure.add_subplot(111)
 
-        plt.plot(summation, c="k")
+        plt.plot(summation, c="r")
+        # plt.box(False)
+        # plt.axis('off')
+        plt.tight_layout()
         figure.canvas.draw()
+
         plt.close(figure)
 
         graph = np.fromstring(figure.canvas.tostring_rgb(), dtype=np.uint8, sep="")

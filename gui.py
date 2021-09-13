@@ -24,6 +24,7 @@ class Camera_App:
         # ----------------------------------------------------------------------
         self.window = window
         self.window.title(window_title)
+        self.monitor_dpi = self.window.winfo_fpixels('1i') # get monitor dpi
 
         self.canvas = tk.Canvas(window, width=1920, height=1080)
         self.canvas.pack()
@@ -31,6 +32,7 @@ class Camera_App:
         self.update()
 
         self.window.mainloop()
+
 
     def update(self):
 
@@ -42,12 +44,12 @@ class Camera_App:
         self.canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
 
         # make vertical graph
-        graph = self.video.make_graph(frame, axis=0)
+        graph = self.video.make_graph(frame, axis=0, dpi=self.monitor_dpi)
         self.graph1 = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(graph))
         self.canvas.create_image(0, image_height, image=self.graph1, anchor=tk.NW)
 
         # make horizontal graph
-        graph = self.video.make_graph(frame, axis=1)
+        graph = self.video.make_graph(frame, axis=1, dpi=self.monitor_dpi)
         self.graph2 = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(graph))
         self.canvas.create_image(image_width, 0, image=self.graph2, anchor=tk.NW)
 
