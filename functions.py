@@ -67,12 +67,9 @@ class VideoCapture:
 
         summation = np.sum(frame, axis=axis)
 
-        figure.add_subplot(111)
-
         plt.plot(summation, c="r")
-        # plt.box(False)
-        # plt.axis('off')
-        plt.tight_layout()
+        plt.axis('off')
+        plt.tight_layout(pad=0)
         figure.canvas.draw()
 
         plt.close(figure)

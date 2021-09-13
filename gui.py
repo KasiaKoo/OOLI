@@ -1,3 +1,4 @@
+from __future__ import with_statement
 from functions import VideoCapture
 import tkinter as tk
 import cv2
@@ -6,8 +7,7 @@ import PIL.ImageTk
 
 
 class Camera_App:
-    def __init__(
-        self, window, window_title, host_ip="0.0.0.0", port=9999, dummy=False, fps=30):
+    def __init__(self, window, window_title, host_ip="0.0.0.0", port=9999, dummy=False, fps=30):
 
         # Get resources
         # ----------------------------------------------------------------------
@@ -18,15 +18,22 @@ class Camera_App:
         self.video = VideoCapture(host_ip=host_ip, port=port, dummy=self.dummy)
 
         # It can only really do like 15 fps since it lags
-        self.delay = 15
+        self.delay = int(1000/fps)
 
         # Make GUI
         # ----------------------------------------------------------------------
+        # make initial window
         self.window = window
         self.window.title(window_title)
-        self.monitor_dpi = self.window.winfo_fpixels('1i') # get monitor dpi
 
-        self.canvas = tk.Canvas(window, width=1920, height=1080)
+        # get monitor specs
+        self.monitor_dpi = self.window.winfo_fpixels('1i') # get monitor dpi
+        self.xres = self.window.winfo_screenwidth()
+        self.yres = self.window.winfo_screenheight()
+        print(self.xres, self.yres)
+        
+        # add canvas to window
+        self.canvas = tk.Canvas(window, width=self.xres, height=self.yres)
         self.canvas.pack()
 
         self.update()
