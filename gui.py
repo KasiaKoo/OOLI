@@ -33,6 +33,7 @@ class Camera_App:
         # make initial window
         self.window = window
         self.window.title(window_title)
+        self.window.iconphoto(True, tk.PhotoImage(file="app_icon.png"))
 
         # get monitor specs
         self.monitor_dpi = self.window.winfo_fpixels('1i') # get monitor dpi
@@ -56,9 +57,9 @@ class Camera_App:
         filters = ["jet", "magma", "viridis", "gray", "binary"]
         self.chosen_filter = tk.StringVar()
         self.chosen_filter.set(filters[0])
-        filter_selector = tk.OptionMenu(self.ui_canvas, self.chosen_filter, *filters)
-        filter_selector.config(width=15, anchor=tk.CENTER)
-        filter_selector.pack(side=tk.TOP)
+        self.filter_selector = tk.OptionMenu(self.ui_canvas, self.chosen_filter, *filters)
+        self.filter_selector.config(width=15, anchor=tk.CENTER)
+        self.filter_selector.pack(side=tk.TOP)
 
         # add snapshot button
         self.snapshot_button = tk.Button(self.ui_canvas, text="Take Snapshot", width=17, command=self.take_snapshot)
