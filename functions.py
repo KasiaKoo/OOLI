@@ -32,12 +32,16 @@ class VideoCapture:
                 pass
 
 
-    def get_data(self):
+    def get_data(self, filt="Greyscale"):
+
+        filters = {"Greyscale": cv2.COLOR_BGR2GRAY,
+                   "RGB": cv2.COLOR_BGR2RGB}
+        chosen_filter = filters[filt]
 
         # if testing, then return laptop webcam feed
         if self.dummy:
             ret, img = self.video.read()
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            img = cv2.cvtColor(img, chosen_filter)
             return img
 
         # otherwise, return server camera feed
@@ -57,6 +61,11 @@ class VideoCapture:
         return frame
 
     def make_graph(self, frame, axis=0, dpi=100):
+
+        # convert to greyscale if in rgb
+        if len(frame.shape) > 2:
+            rgb_weights = [0.2989, 0.5870, 0.1140]
+            frame = np.dot(frame[...,:3], rgb_weights)
 
         height, width = frame.shape
         if axis == 0:

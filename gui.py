@@ -5,6 +5,7 @@ import cv2
 import PIL.Image
 import PIL.ImageTk
 import time
+import os
 
 class Camera_App:
     def __init__(self, window, window_title, host_ip="0.0.0.0", port=9999, dummy=False, fps=30):
@@ -52,37 +53,46 @@ class Camera_App:
         self.ui_canvas.grid(row=0, column=1, sticky=tk.N, pady=5)
 
         # add dropdown menu
-        filters = ["Grayscale", "RGB"]
-        variable = tk.StringVar()
-        variable.set(filters[0])
-        self.filter_selector = tk.OptionMenu(self.ui_canvas, variable, *filters)
-        self.filter_selector.config(width=15, anchor=tk.CENTER)
-        self.filter_selector.pack(side=tk.TOP)
+        filters = ["Greyscale", "RGB"]
+        self.chosen_filter = tk.StringVar()
+        self.chosen_filter.set(filters[0])
+        filter_selector = tk.OptionMenu(self.ui_canvas, self.chosen_filter, *filters)
+        filter_selector.config(width=15, anchor=tk.CENTER)
+        filter_selector.pack(side=tk.TOP)
 
         # add snapshot button
         self.snapshot_button = tk.Button(self.ui_canvas, text="Snapshot", width=17, command=self.take_snapshot)
         self.snapshot_button.pack(side=tk.TOP)
 
         # add pause button
-        self.snapshot_button = tk.Button(self.ui_canvas, text="Snapshot", width=17, command=self.take_snapshot)
+        self.snapshot_button = tk.Button(self.ui_canvas, text="Pause/Play", width=17, command=self.toggle_video)
         self.snapshot_button.pack(side=tk.TOP)
 
         self.update()
 
         self.window.mainloop()
 
+
     def take_snapshot(self):
+        if not os.path.exists("./images"):
+            os.makedirs("./images")
+
         image = PIL.Image.fromarray(self.frame)
 
-        filename = time.strftime("%Y%m%d-%H%M%S") + ".png"
+        filename = "./images/" + time.strftime("%Y%m%d-%H%M%S") + ".png"
         image.save(filename)
         print("Image saved!")
-        
+
+
+    def toggle_video(self):
+        self.video_continuous = not self.video_continuous
+        self.update()
+
 
     def update(self):
 
         # get frame from camera and place it in window
-        self.frame = self.video.get_data()
+        self.frame = self.video.get_data(filt=self.chosen_filter.get())
         self.image = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(self.frame))
         image_width = self.image.width()
         image_height = self.image.height()
@@ -98,7 +108,8 @@ class Camera_App:
         self.graph2 = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(graph))
         self.image_canvas.create_image(image_width, 0, image=self.graph2, anchor=tk.NW)
 
-        self.window.after(self.delay, self.update)
+        if self.video_continuous:
+            self.window.after(self.delay, self.update)
 
 
 if __name__ == "__main__":
