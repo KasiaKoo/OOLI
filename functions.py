@@ -22,6 +22,8 @@ class VideoCapture:
         self.dummy = dummy
         if self.dummy:
             self.video = cv2.VideoCapture(0)
+            # self.video.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0.25)
+            # self.video.set(cv2.CAP_PROP_EXPOSURE, -7)
 
         # otherwise, connect to server
         else:
@@ -32,17 +34,24 @@ class VideoCapture:
                 pass
 
 
-    def get_data(self, filt="Greyscale"):
+    def make_video_frame(self, cmap="jet", dpi=100):
 
         # if testing, then return laptop webcam feed
         if self.dummy:
-
-            filters = {"Greyscale": cv2.COLOR_BGR2GRAY,
-                       "RGB": cv2.COLOR_BGR2RGB}
-            chosen_filter = filters[filt]
-
             ret, img = self.video.read()
-            img = cv2.cvtColor(img, chosen_filter)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+            height, width = (240, 426)
+            figure = plt.figure(figsize=(width/dpi, height/dpi), dpi=dpi)
+            plt.imshow(img, cmap=cmap)
+            plt.axis("off")
+            plt.tight_layout(pad=0)
+            figure.canvas.draw()
+            plt.close(figure)
+
+            img = np.fromstring(figure.canvas.tostring_rgb(), dtype=np.uint8, sep="")
+            img = img.reshape(figure.canvas.get_width_height()[::-1] + (3,))
+
             return img
 
         # otherwise, return server camera feed
@@ -59,6 +68,17 @@ class VideoCapture:
         frame_data = self.data[:msg_size]
         self.data = self.data[msg_size:]
         frame = pickle.loads(frame_data)
+
+        figure = plt.figure()
+        plt.imshow(frame, cmap=cmap)
+        plt.axis("off")
+        plt.tight_layout(pad=0)
+        figure.canvas.draw()
+        plt.close(figure)
+
+        frame = np.fromstring(figure.canvas.tostring_rgb(), dtype=np.uint8, sep="")
+        frame = frame.reshape(figure.canvas.get_width_height()[::-1] + (3,))
+
         return frame
 
     def make_graph(self, frame, axis=0, dpi=100):
@@ -78,8 +98,8 @@ class VideoCapture:
         summation = np.sum(frame, axis=axis)
 
         plt.plot(summation, c="r")
-        plt.axis('off')
-        plt.tight_layout(pad=0)
+        # plt.axis('off')
+        plt.tight_layout()
         figure.canvas.draw()
 
         plt.close(figure)
