@@ -60,9 +60,9 @@ class VideoCapture:
 
         height, width = frame.shape
         if axis == 0:
-            figure = plt.figure(figsize=(width/dpi, (width/dpi)/5), dpi=dpi)
+            figure = plt.figure(figsize=(width/dpi, (height/dpi)/5), dpi=dpi)
         else:
-            figure = plt.figure(figsize=(height/dpi, (width/dpi)/5), dpi=dpi)
+            figure = plt.figure(figsize=(height/dpi, (height/dpi)/5), dpi=dpi)
             
 
         summation = np.sum(frame, axis=axis)
