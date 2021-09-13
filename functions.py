@@ -34,12 +34,13 @@ class VideoCapture:
 
     def get_data(self, filt="Greyscale"):
 
-        filters = {"Greyscale": cv2.COLOR_BGR2GRAY,
-                   "RGB": cv2.COLOR_BGR2RGB}
-        chosen_filter = filters[filt]
-
         # if testing, then return laptop webcam feed
         if self.dummy:
+
+            filters = {"Greyscale": cv2.COLOR_BGR2GRAY,
+                       "RGB": cv2.COLOR_BGR2RGB}
+            chosen_filter = filters[filt]
+
             ret, img = self.video.read()
             img = cv2.cvtColor(img, chosen_filter)
             return img

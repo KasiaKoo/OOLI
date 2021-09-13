@@ -15,6 +15,10 @@ class Camera_App:
         # for testing. if dummy is true, use laptop webcam instead of server
         self.dummy = dummy
 
+        # filters for if dummy is true
+        if self.dummy:
+            filters = ["Greyscale", "RGB"]
+
         # Connect to video feed
         self.video = VideoCapture(host_ip=host_ip, port=port, dummy=self.dummy)
 
@@ -53,7 +57,6 @@ class Camera_App:
         self.ui_canvas.grid(row=0, column=1, sticky=tk.N, pady=5)
 
         # add dropdown menu
-        filters = ["Greyscale", "RGB"]
         self.chosen_filter = tk.StringVar()
         self.chosen_filter.set(filters[0])
         filter_selector = tk.OptionMenu(self.ui_canvas, self.chosen_filter, *filters)
