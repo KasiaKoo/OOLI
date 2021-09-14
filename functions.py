@@ -39,20 +39,20 @@ class VideoCapture:
         # if testing, then return laptop webcam feed
         if self.dummy:
             ret, img = self.video.read()
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            original_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
             height, width = (240, 426)
             figure = plt.figure(figsize=(width/dpi, height/dpi), dpi=dpi)
-            plt.imshow(img, cmap=cmap)
+            plt.imshow(original_img, cmap=cmap)
             plt.axis("off")
             plt.tight_layout(pad=0)
             figure.canvas.draw()
             plt.close(figure)
 
-            img = np.fromstring(figure.canvas.tostring_rgb(), dtype=np.uint8, sep="")
-            img = img.reshape(figure.canvas.get_width_height()[::-1] + (3,))
+            preview_img = np.fromstring(figure.canvas.tostring_rgb(), dtype=np.uint8, sep="")
+            preview_img = preview_img.reshape(figure.canvas.get_width_height()[::-1] + (3,))
 
-            return img
+            return preview_img, original_img
 
         # otherwise, return server camera feed
         while len(self.data) < self.payload_size:
@@ -67,35 +67,36 @@ class VideoCapture:
             self.data += self.client_socket.recv(4 * 1024)
         frame_data = self.data[:msg_size]
         self.data = self.data[msg_size:]
-        frame = pickle.loads(frame_data)
+
+        original_img = pickle.loads(frame_data)
 
         figure = plt.figure()
-        plt.imshow(frame, cmap=cmap)
+        plt.imshow(original_img, cmap=cmap)
         plt.axis("off")
         plt.tight_layout(pad=0)
         figure.canvas.draw()
         plt.close(figure)
 
-        frame = np.fromstring(figure.canvas.tostring_rgb(), dtype=np.uint8, sep="")
-        frame = frame.reshape(figure.canvas.get_width_height()[::-1] + (3,))
+        preview_img = np.fromstring(figure.canvas.tostring_rgb(), dtype=np.uint8, sep="")
+        preview_img = preview_img.reshape(figure.canvas.get_width_height()[::-1] + (3,))
 
-        return frame
+        return preview_img, original_img
 
-    def make_graph(self, frame, axis=0, dpi=100):
+    def make_graph(self, preview_img, axis=0, dpi=100):
 
         # convert to greyscale if in rgb
-        if len(frame.shape) > 2:
+        if len(preview_img.shape) > 2:
             rgb_weights = [0.2989, 0.5870, 0.1140]
-            frame = np.dot(frame[...,:3], rgb_weights)
+            preview_img = np.dot(preview_img[...,:3], rgb_weights)
 
-        height, width = frame.shape
+        height, width = preview_img.shape
         if axis == 0:
             figure = plt.figure(figsize=(width/dpi, (height/dpi)/5), dpi=dpi)
         else:
             figure = plt.figure(figsize=(height/dpi, (height/dpi)/5), dpi=dpi)
             
 
-        summation = np.sum(frame, axis=axis)
+        summation = np.sum(preview_img, axis=axis)
 
         plt.plot(summation, c="r")
         # plt.axis('off')

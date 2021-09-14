@@ -1,6 +1,7 @@
 from __future__ import with_statement
 from functions import VideoCapture
 import tkinter as tk
+from tkinter import filedialog
 import PIL.Image
 import PIL.ImageTk
 import time
@@ -22,8 +23,8 @@ class Camera_App:
         # It can only really do like 15 fps since it lags
         self.delay = int(1000/fps)
 
-        # Temporary placeholder image
-        self.frame = None
+        # Temporary placeholder photo array
+        self.photo = None
 
         # Boolean continuous video
         self.video_continuous = True
@@ -44,8 +45,8 @@ class Camera_App:
         self.window.geometry(str(self.xres)+"x"+str(self.yres))
 
         # add a canvas in which image feed and graphs will sit
-        self.image_canvas = tk.Canvas(self.window, width=res_x + res_y/5, height=res_y + res_y/5)
-        self.image_canvas.grid(row=0, column=0)
+        self.preview_canvas = tk.Canvas(self.window, width=res_x + res_y/5, height=res_y + res_y/5)
+        self.preview_canvas.grid(row=0, column=0)
 
         # add a canvas in which all the buttons will sit
         self.ui_canvas = tk.Frame(self.window)
@@ -76,10 +77,16 @@ class Camera_App:
 
 
     def take_snapshot(self):
-        image = PIL.Image.fromarray(self.frame)
-        filename = time.strftime("%Y%m%d-%H%M%S") + ".png"
-        image.save(filename)
-        print("Image saved!")
+        image = PIL.Image.fromarray(self.photo)
+        file = filedialog.asksaveasfile(mode="wb", defaultextension=".bmp", filetypes=(("Bitmap File", "*.bmp"),
+                                                                                       ("PNG File", "*.png"),
+                                                                                       ("JPEG File", "*.jpg"),
+                                                                                       ("All Files", "*.*")))
+        if file:
+            # image.save(file)
+            print("Image saved!")
+        else:
+            print("Could not save image!")
 
 
     def toggle_video(self):
@@ -95,21 +102,21 @@ class Camera_App:
     def update(self):
 
         # get frame from camera and place it in window
-        self.frame = self.video.make_video_frame(cmap=self.chosen_filter.get(), dpi=self.monitor_dpi)
-        self.image = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(self.frame))
+        preview, self.photo = self.video.make_video_frame(cmap=self.chosen_filter.get(), dpi=self.monitor_dpi)
+        self.image = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(preview))
         image_width = self.image.width()
         image_height = self.image.height()
-        self.image_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
+        self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
 
         # make vertical graph
-        graph = self.video.make_graph(self.frame, axis=0, dpi=self.monitor_dpi)
+        graph = self.video.make_graph(preview, axis=0, dpi=self.monitor_dpi)
         self.graph1 = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(graph))
-        self.image_canvas.create_image(0, image_height, image=self.graph1, anchor=tk.NW)
+        self.preview_canvas.create_image(0, image_height, image=self.graph1, anchor=tk.NW)
 
         # make horizontal graph
-        graph = self.video.make_graph(self.frame, axis=1, dpi=self.monitor_dpi)
+        graph = self.video.make_graph(preview, axis=1, dpi=self.monitor_dpi)
         self.graph2 = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(graph))
-        self.image_canvas.create_image(image_width, 0, image=self.graph2, anchor=tk.NW)
+        self.preview_canvas.create_image(image_width, 0, image=self.graph2, anchor=tk.NW)
 
         if self.video_continuous:
             self.window.after(self.delay, self.update)
