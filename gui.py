@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import filedialog
 import PIL.Image
 import PIL.ImageTk
-import time
+import matplotlib.pyplot as plt
 
 class Camera_App:
     def __init__(self, window, window_title, host_ip="0.0.0.0", port=9999, dummy=False, fps=30):
@@ -17,8 +17,8 @@ class Camera_App:
         # Connect to video feed
         self.video = VideoCapture(host_ip=host_ip, port=port, dummy=self.dummy)
 
-        # Get camera resolution
-        res_y, res_x, _ = self.video.make_video_frame().shape
+        # Get preview resolution
+        res_y, res_x, _ = self.video.make_video_frame()[0].shape
 
         # It can only really do like 15 fps since it lags
         self.delay = int(1000/fps)
@@ -83,7 +83,7 @@ class Camera_App:
                                                                                        ("JPEG File", "*.jpg"),
                                                                                        ("All Files", "*.*")))
         if file:
-            # image.save(file)
+            image.save(file)
             print("Image saved!")
         else:
             print("Could not save image!")
