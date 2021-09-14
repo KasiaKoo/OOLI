@@ -34,16 +34,18 @@ class VideoCapture:
                 pass
 
 
-    def make_video_frame(self, cmap="jet", dpi=100):
+    def make_video_frame(self, cmap="jet", dpi=100, resolution=(854,480), min_x=None, max_x=None, min_y=None, max_y=None):
 
         # if testing, then return laptop webcam feed
         if self.dummy:
             ret, img = self.video.read()
             original_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-            height, width = (240, 426)
+            width, height = resolution
             figure = plt.figure(figsize=(width/dpi, height/dpi), dpi=dpi)
-            plt.imshow(original_img, cmap=cmap)
+            plt.imshow(original_img, cmap=cmap, aspect="auto")
+            plt.xlim(min_x, max_x)
+            plt.ylim(min_y, max_y)
             plt.axis("off")
             plt.tight_layout(pad=0)
             figure.canvas.draw()
@@ -71,7 +73,9 @@ class VideoCapture:
         original_img = pickle.loads(frame_data)
 
         figure = plt.figure()
-        plt.imshow(original_img, cmap=cmap)
+        plt.imshow(original_img, cmap=cmap, aspect="auto")
+        plt.xlim(min_x, max_x)
+        plt.ylim(min_y, max_y)
         plt.axis("off")
         plt.tight_layout(pad=0)
         figure.canvas.draw()
@@ -82,7 +86,7 @@ class VideoCapture:
 
         return preview_img, original_img
 
-    def make_graph(self, preview_img, axis=0, dpi=100):
+    def make_graph(self, preview_img, axis=0, dpi=100, graph_height=100, min_x=None, max_x=None, min_y=None, max_y=None):
 
         # convert to greyscale if in rgb
         if len(preview_img.shape) > 2:
@@ -91,14 +95,21 @@ class VideoCapture:
 
         height, width = preview_img.shape
         if axis == 0:
-            figure = plt.figure(figsize=(width/dpi, (height/dpi)/5), dpi=dpi)
+            figure = plt.figure(figsize=(width/dpi, (graph_height/dpi)), dpi=dpi)
         else:
-            figure = plt.figure(figsize=(height/dpi, (height/dpi)/5), dpi=dpi)
+            figure = plt.figure(figsize=(height/dpi, (graph_height/dpi)), dpi=dpi)
             
 
         summation = np.sum(preview_img, axis=axis)
 
-        plt.plot(summation, c="r")
+        # if min_x or max_x is None, the linspace fails, so have try except
+        try:
+            x_values = np.linspace(min_x, max_x, len(summation))
+            plt.plot(np.linspace(min_x, max_x, len(summation)), summation, c="r")
+        except:
+            plt.plot(summation, c="r")
+
+        plt.ylim(min_y, max_y)
         # plt.axis('off')
         plt.tight_layout()
         figure.canvas.draw()
