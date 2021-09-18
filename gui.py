@@ -35,8 +35,12 @@ class Camera_App:
                             "854x480 (16:9)": (854, 480),
                             "1280x720 (16:9)": (1280, 720)}
 
+
         # Get initial preview resolution
         self.res_x, self.res_y = self.resolutions["854x480 (16:9)"]
+
+        # Allowed filters
+        filters = ["jet", "magma", "viridis", "gray", "binary"]
 
         # Height of reference graph in pixels
         self.reference_graph_height = 150
@@ -84,7 +88,6 @@ class Camera_App:
         # add dropdown menu for colourmap
         self.colourmap_dropdown_label = tk.Label(self.ui_canvas, text="Colour Map")
         self.colourmap_dropdown_label.pack(side=tk.TOP)
-        filters = ["jet", "magma", "viridis", "gray", "binary"]
         self.chosen_filter = tk.StringVar()
         self.chosen_filter.set(filters[0])
         self.filter_selector = tk.OptionMenu(self.ui_canvas, self.chosen_filter, *filters)
