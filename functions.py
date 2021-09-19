@@ -67,7 +67,7 @@ class VideoCapture:
         figure = plt.figure(figsize=(width/dpi, height/dpi), dpi=dpi)
         plt.imshow(original_img, cmap=cmap, aspect="auto")
         plt.xlim(min_x, max_x)
-        plt.ylim(min_y, max_y)
+        plt.ylim(max_y, min_y) # this has to be reversed since the numbers on the vert graph are reverse of the image
         plt.axis("off")
         plt.tight_layout(pad=0)
         figure.canvas.draw()
