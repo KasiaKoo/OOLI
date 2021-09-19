@@ -21,7 +21,7 @@ class VideoCapture:
 
         # if testing, then connect to laptop webcam
         if host_ip=="None":
-            self.dummy = True
+            self.connected_to_server = False
             self.video = cv2.VideoCapture(0)
             # self.video.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0.25)
             # self.video.set(cv2.CAP_PROP_EXPOSURE, -7)
@@ -30,16 +30,17 @@ class VideoCapture:
         else:
             try:
                 self.client_socket.connect((self.host_ip, self.port))
-            except: # print message and default to webcam
-                self.dummy = True
-                print("Could not connect to server")
-                self.video = cv2.VideoCapture(0)
+                self.connected_to_server = True
+            except: # Raise exception
+                self.connected_to_server = False
+                print("Could not connect to server!")
+                raise Exception("Could not connect to server!")
 
 
     def get_video_frame(self):
 
         # if testing, then return laptop webcam feed
-        if self.dummy:
+        if self.connected_to_server == False:
             ret, img = self.video.read()
             original_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 

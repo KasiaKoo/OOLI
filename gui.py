@@ -5,6 +5,7 @@ from tkinter import filedialog
 import PIL.Image
 import PIL.ImageTk
 import json
+from multiprocessing import Process
 
 class Camera_App:
     def __init__(self, window, window_title, fps=30):
@@ -83,6 +84,10 @@ class Camera_App:
         self.camera_selector = tk.OptionMenu(self.ui_canvas, self.chosen_camera, *camera_list)
         self.camera_selector.config(width=15, anchor=tk.CENTER)
         self.camera_selector.pack(side=tk.TOP)
+
+        # add button to open camera list json file
+        self.add_camera_button = tk.Button(self.ui_canvas, text="Open Server List", width=17, command=self.open_server_list)
+        self.add_camera_button.pack(side=tk.TOP)
 
         # add dropdown menu for preview resolution
         self.resolution_dropdown_label = tk.Label(self.ui_canvas, text="Preview Resolution")
@@ -167,6 +172,7 @@ class Camera_App:
         self.update()
         return
 
+
     def crop_horizontal(self):
         try:
             self.horizontal_xmin = float(self.horizontal_xmin_entry.get())
@@ -191,6 +197,7 @@ class Camera_App:
         self.make_preview_image()
         self.make_horizontal_graph()
 
+        
     def crop_vertical(self):
         try:
             self.vertical_xmin = float(self.vertical_xmin_entry.get())
@@ -214,6 +221,7 @@ class Camera_App:
         # make preview image and vertical graph
         self.make_preview_image()
         self.make_vertical_graph()
+
 
     def reset_crop(self, update=True):
         self.vertical_xmin = None
@@ -259,10 +267,21 @@ class Camera_App:
 
 
     def connect_to_camera(self):
-        chosen_camera = self.camera_details[self.chosen_camera.get()]
-        host_ip = chosen_camera["host_ip"]
-        port = int(chosen_camera["port"])
-        self.video = VideoCapture(host_ip=host_ip, port=port)
+        try:
+            chosen_camera = self.camera_details[self.chosen_camera.get()]
+            host_ip = chosen_camera["host_ip"]
+            port = int(chosen_camera["port"])
+            self.video = VideoCapture(host_ip=host_ip, port=port)
+        except:
+            self.chosen_camera.set("Dummy")
+            chosen_camera = self.camera_details[self.chosen_camera.get()]
+            host_ip = chosen_camera["host_ip"]
+            port = int(chosen_camera["port"])
+            self.video = VideoCapture(host_ip=host_ip, port=port)
+
+
+    def open_server_list(self):
+        pass
 
 
     def update_all(self):
@@ -272,9 +291,10 @@ class Camera_App:
         self.make_horizontal_graph()
         self.make_vertical_graph()
 
+
     def update(self):
 
-        # Connect to video feed
+        # connect to camera
         self.connect_to_camera()
 
         # check if preview res has been changed and update it
