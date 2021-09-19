@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib
 import time
+from threading import Thread
 matplotlib.use('agg')
 
 
@@ -24,6 +25,9 @@ class VideoCapture:
         if host_ip=="None":
             self.connected_to_server = False
             self.video = cv2.VideoCapture(0)
+            self.thread = Thread(target = self.update, args = ())
+            self.thread.daemon = True
+            self.thread.start()
             self.video.set(cv2.CAP_PROP_FPS, 60) # set camera fps if possible
             self.video.set(cv2.CAP_PROP_BUFFERSIZE, 1)
             # self.video.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0.25)
@@ -39,15 +43,33 @@ class VideoCapture:
                 print("Could not connect to server!")
                 raise Exception("Could not connect to server!")
 
+        self.status = False
+        self.frame = None
+
+
+    def update(self):
+        while True:
+            if self.video.isOpened():
+                (self.status, self.frame) = self.video.read()
+
+    def grab_frame(self):
+        if self.status:
+            return self.frame
+        else:
+            return None
+
 
     def get_video_frame(self):
 
         # if testing, then return laptop webcam feed
         if self.connected_to_server == False:
-            ret, img = self.video.read()
-            original_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-            return original_img
+            # ret, img = self.video.read()
+            img = self.grab_frame()
+            if img is not None:
+                original_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                return original_img
+            else:
+                return np.zeros((720,1280))
 
         # otherwise, return server camera feed
         while len(self.data) < self.payload_size:
