@@ -102,13 +102,9 @@ class VideoCapture:
 
         summation = np.sum(preview_img, axis=axis)
 
-        # if min_x or max_x is None, the linspace fails, so have try except
-        try:
-            x_values = np.linspace(min_x, max_x, len(summation))
-            plt.plot(np.linspace(min_x, max_x, len(summation)), summation, c="r")
-        except:
-            plt.plot(summation, c="r")
+        plt.plot(summation, c="r")
 
+        plt.xlim(min_x, max_x)
         plt.ylim(min_y, max_y)
         # plt.axis('off')
         plt.tight_layout()
