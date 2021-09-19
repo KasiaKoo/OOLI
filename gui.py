@@ -6,6 +6,7 @@ import PIL.Image
 import PIL.ImageTk
 import json
 from multiprocessing import Process
+import os, sys, subprocess
 
 class Camera_App:
     def __init__(self, window, window_title, fps=30):
@@ -281,7 +282,11 @@ class Camera_App:
 
 
     def open_server_list(self):
-        pass
+        if sys.platform == "win32":
+            os.startfile("camera_list.json")
+        else:
+            opener = "open" if sys.platform == "darwin" else "xdg-open"
+            subprocess.call([opener, "camera_list.json"])
 
 
     def update_all(self):
