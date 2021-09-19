@@ -34,7 +34,7 @@ class VideoCapture:
                 pass
 
 
-    def make_video_frame(self, cmap="jet", dpi=100, resolution=(854,480), min_x=None, max_x=None, min_y=None, max_y=None):
+    def make_video_frame(self, cmap="jet", dpi=100, resolution=(854,480)):
 
         # if testing, then return laptop webcam feed
         if self.dummy:
@@ -44,8 +44,6 @@ class VideoCapture:
             width, height = resolution
             figure = plt.figure(figsize=(width/dpi, height/dpi), dpi=dpi)
             plt.imshow(original_img, cmap=cmap, aspect="auto")
-            plt.xlim(min_x, max_x)
-            plt.ylim(min_y, max_y)
             plt.axis("off")
             plt.tight_layout(pad=0)
             figure.canvas.draw()
@@ -74,8 +72,6 @@ class VideoCapture:
 
         figure = plt.figure()
         plt.imshow(original_img, cmap=cmap, aspect="auto")
-        plt.xlim(min_x, max_x)
-        plt.ylim(min_y, max_y)
         plt.axis("off")
         plt.tight_layout(pad=0)
         figure.canvas.draw()
@@ -86,7 +82,7 @@ class VideoCapture:
 
         return preview_img, original_img
 
-    def make_graph(self, preview_img, axis=0, dpi=100, graph_height=100, min_x=None, max_x=None, min_y=None, max_y=None):
+    def make_graph(self, preview_img, axis=0, dpi=100, graph_height=100):
 
         # convert to greyscale if in rgb
         if len(preview_img.shape) > 2:
@@ -102,14 +98,7 @@ class VideoCapture:
 
         summation = np.sum(preview_img, axis=axis)
 
-        # if min_x or max_x is None, the linspace fails, so have try except
-        try:
-            x_values = np.linspace(min_x, max_x, len(summation))
-            plt.plot(np.linspace(min_x, max_x, len(summation)), summation, c="r")
-        except:
-            plt.plot(summation, c="r")
-
-        plt.ylim(min_y, max_y)
+        plt.plot(summation, c="r")
         # plt.axis('off')
         plt.tight_layout()
         figure.canvas.draw()

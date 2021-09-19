@@ -213,24 +213,17 @@ class Camera_App:
             self.make_vertical_graph()
 
     def make_preview_image(self):
-        self.preview, self.photo = self.video.make_video_frame(cmap=self.chosen_filter.get(),
-                                                               dpi=self.monitor_dpi,
-                                                               resolution=(self.res_x, self.res_y),
-                                                               min_x=self.horizontal_xmin,
-                                                               max_x=self.horizontal_xmax,
-                                                               min_y=self.vertical_xmin,
-                                                               max_y=self.vertical_xmax)
         self.image = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(self.preview))
         self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
         
 
     def make_horizontal_graph(self):
-        graph = self.video.make_graph(self.preview, axis=0, dpi=self.monitor_dpi, graph_height=self.reference_graph_height, min_x=self.horizontal_xmin, max_x=self.horizontal_xmax)
+        graph = self.video.make_graph(self.preview, axis=0, dpi=self.monitor_dpi, graph_height=self.reference_graph_height)
         self.graph1 = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(graph))
         self.preview_canvas.create_image(0, self.image.height(), image=self.graph1, anchor=tk.NW)
 
     def make_vertical_graph(self):
-        graph = self.video.make_graph(self.preview, axis=1, dpi=self.monitor_dpi, graph_height=self.reference_graph_height, min_x=self.vertical_xmin, max_x=self.vertical_xmax)
+        graph = self.video.make_graph(self.preview, axis=1, dpi=self.monitor_dpi, graph_height=self.reference_graph_height)
         self.graph2 = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(graph))
         self.preview_canvas.create_image(self.image.width(), 0, image=self.graph2, anchor=tk.NW)
 
@@ -241,6 +234,11 @@ class Camera_App:
 
         # Update the preview canvas
         self.preview_canvas.config(width=self.res_x + self.reference_graph_height, height=self.res_y + self.reference_graph_height)
+
+
+        self.preview, self.photo = self.video.make_video_frame(cmap=self.chosen_filter.get(),
+                                                               dpi=self.monitor_dpi,
+                                                               resolution=(self.res_x, self.res_y))
 
         # get frame from camera and place it in window
         self.make_preview_image()
