@@ -5,10 +5,13 @@ from tkinter import filedialog
 import PIL.Image
 import PIL.ImageTk
 import json
-from multiprocessing import Process
 import os, sys, subprocess
 
 class Camera_App:
+
+    # APP INITIALISE
+    # --------------------------------------------------------------------------
+    
     def __init__(self, window, window_title, fps=30):
 
         # Make resources
@@ -51,7 +54,6 @@ class Camera_App:
         self.horizontal_xmax = None
         self.vertical_xmin = None
         self.vertical_xmax = None
-
 
         # Make GUI
         # ----------------------------------------------------------------------
@@ -146,9 +148,19 @@ class Camera_App:
         self.snapshot_button.pack(side=tk.TOP)
 
 
-        self.update()
+        # Start app
+        # ----------------------------------------------------------------------
 
+        # Connect to camera before the update
+        self.connect_to_camera()
+
+        # start update loop for app
+        self.update()
         self.window.mainloop()
+
+
+    # APP FUNCTIONS
+    # --------------------------------------------------------------------------
 
 
     def take_snapshot(self):
@@ -298,9 +310,6 @@ class Camera_App:
 
 
     def update(self):
-
-        # connect to camera
-        self.connect_to_camera()
 
         # check if preview res has been changed and update it
         self.change_preview_resolution()
