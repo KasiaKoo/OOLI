@@ -34,27 +34,14 @@ class VideoCapture:
                 pass
 
 
-    def make_video_frame(self, cmap="jet", dpi=100, resolution=(854,480), min_x=None, max_x=None, min_y=None, max_y=None):
+    def get_video_frame(self):
 
         # if testing, then return laptop webcam feed
         if self.dummy:
             ret, img = self.video.read()
             original_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-            width, height = resolution
-            figure = plt.figure(figsize=(width/dpi, height/dpi), dpi=dpi)
-            plt.imshow(original_img, cmap=cmap, aspect="auto")
-            plt.xlim(min_x, max_x)
-            plt.ylim(min_y, max_y)
-            plt.axis("off")
-            plt.tight_layout(pad=0)
-            figure.canvas.draw()
-            plt.close(figure)
-
-            preview_img = np.fromstring(figure.canvas.tostring_rgb(), dtype=np.uint8, sep="")
-            preview_img = preview_img.reshape(figure.canvas.get_width_height()[::-1] + (3,))
-
-            return preview_img, original_img
+            return original_img
 
         # otherwise, return server camera feed
         while len(self.data) < self.payload_size:
@@ -72,7 +59,12 @@ class VideoCapture:
 
         original_img = pickle.loads(frame_data)
 
-        figure = plt.figure()
+        return original_img
+
+
+    def make_cropped_image(self, original_img, cmap="jet", dpi=100, resolution=(854,480), min_x=None, max_x=None, min_y=None, max_y=None):
+        width, height = resolution
+        figure = plt.figure(figsize=(width/dpi, height/dpi), dpi=dpi)
         plt.imshow(original_img, cmap=cmap, aspect="auto")
         plt.xlim(min_x, max_x)
         plt.ylim(min_y, max_y)
@@ -84,7 +76,8 @@ class VideoCapture:
         preview_img = np.fromstring(figure.canvas.tostring_rgb(), dtype=np.uint8, sep="")
         preview_img = preview_img.reshape(figure.canvas.get_width_height()[::-1] + (3,))
 
-        return preview_img, original_img
+        return preview_img
+
 
     def make_graph(self, preview_img, axis=0, dpi=100, graph_height=100, min_x=None, max_x=None, min_y=None, max_y=None):
 
