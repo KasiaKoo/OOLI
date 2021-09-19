@@ -11,16 +11,17 @@ matplotlib.use('agg')
 
 
 class VideoCapture:
-    def __init__(self, host_ip="0.0.0.0", port=9999, dummy=False):
+    def __init__(self, host_ip="0.0.0.0", port=9999):
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client_socket.settimeout(10) # set timeout to be 10 seconds
         self.host_ip = host_ip
         self.port = port
         self.data = b""
         self.payload_size = struct.calcsize("Q")
 
         # if testing, then connect to laptop webcam
-        self.dummy = dummy
-        if self.dummy:
+        if host_ip=="None":
+            self.dummy = True
             self.video = cv2.VideoCapture(0)
             # self.video.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0.25)
             # self.video.set(cv2.CAP_PROP_EXPOSURE, -7)
@@ -29,9 +30,10 @@ class VideoCapture:
         else:
             try:
                 self.client_socket.connect((self.host_ip, self.port))
-            except:
+            except: # print message and default to webcam
+                self.dummy = True
                 print("Could not connect to server")
-                pass
+                self.video = cv2.VideoCapture(0)
 
 
     def get_video_frame(self):

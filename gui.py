@@ -4,18 +4,13 @@ import tkinter as tk
 from tkinter import filedialog
 import PIL.Image
 import PIL.ImageTk
-import matplotlib.pyplot as plt
+import json
 
 class Camera_App:
-    def __init__(self, window, window_title, host_ip="0.0.0.0", port=9999, dummy=False, fps=30):
+    def __init__(self, window, window_title, fps=30):
 
         # Make resources
         # ----------------------------------------------------------------------
-        # for testing. if dummy is true, use laptop webcam instead of server
-        self.dummy = dummy
-
-        # Connect to video feed
-        self.video = VideoCapture(host_ip=host_ip, port=port, dummy=self.dummy)
 
         # It can only really do like 15 fps since it lags
         self.delay = int(1000/fps)
@@ -26,6 +21,10 @@ class Camera_App:
 
         # Boolean continuous video
         self.video_continuous = True
+
+        # Details of available cameras
+        with open("camera_list.json") as f:
+            self.camera_details = json.load(f)
 
         # Allowed preview resolutions (add any required)
         self.resolutions = {"256x144 (16:9)": (256, 144),
@@ -75,6 +74,16 @@ class Camera_App:
         self.ui_canvas = tk.Frame(self.window)
         self.ui_canvas.grid(row=0, column=1, sticky=tk.N, pady=5)
 
+        # add a dropdown menu for selecting camera
+        self.camera_select_label = tk.Label(self.ui_canvas, text="Select Camera")
+        self.camera_select_label.pack(side=tk.TOP)
+        camera_list = list(self.camera_details.keys())
+        self.chosen_camera = tk.StringVar()
+        self.chosen_camera.set("Dummy")
+        self.camera_selector = tk.OptionMenu(self.ui_canvas, self.chosen_camera, *camera_list)
+        self.camera_selector.config(width=15, anchor=tk.CENTER)
+        self.camera_selector.pack(side=tk.TOP)
+
         # add dropdown menu for preview resolution
         self.resolution_dropdown_label = tk.Label(self.ui_canvas, text="Preview Resolution")
         self.resolution_dropdown_label.pack(side=tk.TOP)
@@ -93,6 +102,15 @@ class Camera_App:
         self.filter_selector = tk.OptionMenu(self.ui_canvas, self.chosen_filter, *filters)
         self.filter_selector.config(width=15, anchor=tk.CENTER)
         self.filter_selector.pack(side=tk.TOP)
+
+        # add update button (for when not continuous)
+        self.update_button = tk.Button(self.ui_canvas, text="Update", width=17, command=self.update_all)
+        self.update_button.pack(side=tk.TOP)
+
+        # add pause button
+        self.continuous_button = tk.Button(self.ui_canvas, text="Continuous", width=17, command=self.toggle_video)
+        self.continuous_button.config(relief=tk.SUNKEN, fg="green")
+        self.continuous_button.pack(side=tk.TOP)
 
         # add horizontal graph X limits text input
         self.horizontal_limits_label = tk.Label(self.ui_canvas, text="Horizontal Limits")
@@ -121,10 +139,6 @@ class Camera_App:
         self.snapshot_button = tk.Button(self.ui_canvas, text="Take Snapshot", width=17, command=self.take_snapshot)
         self.snapshot_button.pack(side=tk.TOP)
 
-        # add pause button
-        self.continuous_button = tk.Button(self.ui_canvas, text="Continuous", width=17, command=self.toggle_video)
-        self.continuous_button.config(relief=tk.SUNKEN, fg="green")
-        self.continuous_button.pack(side=tk.TOP)
 
         self.update()
 
@@ -208,9 +222,8 @@ class Camera_App:
         self.horizontal_xmax = None
 
         if update:
-            self.make_preview_image()
-            self.make_horizontal_graph()
-            self.make_vertical_graph()
+            self.update_all()
+
 
     def make_preview_image(self):
         self.preview = self.video.make_cropped_image(self.photo,
@@ -237,13 +250,35 @@ class Camera_App:
         self.preview_canvas.create_image(self.image.width(), 0, image=self.graph2, anchor=tk.NW)
 
 
-    def update(self):
-
+    def change_preview_resolution(self):
         # check to see if the preview resolution has been changed
         self.res_x, self.res_y = self.resolutions[self.chosen_res.get()]
 
         # Update the preview canvas
         self.preview_canvas.config(width=self.res_x + self.reference_graph_height, height=self.res_y + self.reference_graph_height)
+
+
+    def connect_to_camera(self):
+        chosen_camera = self.camera_details[self.chosen_camera.get()]
+        host_ip = chosen_camera["host_ip"]
+        port = int(chosen_camera["port"])
+        self.video = VideoCapture(host_ip=host_ip, port=port)
+
+
+    def update_all(self):
+        self.connect_to_camera()
+        self.change_preview_resolution()
+        self.make_preview_image()
+        self.make_horizontal_graph()
+        self.make_vertical_graph()
+
+    def update(self):
+
+        # Connect to video feed
+        self.connect_to_camera()
+
+        # check if preview res has been changed and update it
+        self.change_preview_resolution()
 
         # Get preview image and original-size image
         self.photo = self.video.get_video_frame()
@@ -262,4 +297,4 @@ class Camera_App:
 
 
 if __name__ == "__main__":
-    Camera_App(tk.Tk(), "Camera App", dummy=True, fps=30, host_ip="10.198.202.145", port=9999)
+    Camera_App(tk.Tk(), "Camera App", fps=30)
