@@ -1,9 +1,9 @@
 {
-    "Dummy": {
+    "Laptop Webcam": {
 	"host_ip": "None",
 	"port": "0"
     },
-    "Kasia": {
+    "Kasia Camera": {
 	"host_ip": "10.198.202.145",
 	"port": "9999"
     }

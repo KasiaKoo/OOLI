@@ -83,7 +83,7 @@ class Camera_App:
         self.camera_select_label.pack(side=tk.TOP)
         camera_list = list(self.camera_details.keys())
         self.chosen_camera = tk.StringVar()
-        self.chosen_camera.set("Dummy")
+        self.chosen_camera.set("Laptop Webcam")
         self.camera_selector = tk.OptionMenu(self.ui_canvas, self.chosen_camera, *camera_list)
         self.camera_selector.config(width=15, anchor=tk.CENTER)
         self.camera_selector.pack(side=tk.TOP)
@@ -286,7 +286,7 @@ class Camera_App:
             port = int(chosen_camera["port"])
             self.video = VideoCapture(host_ip=host_ip, port=port)
         except:
-            self.chosen_camera.set("Dummy")
+            self.chosen_camera.set("Laptop Webcam")
             chosen_camera = self.camera_details[self.chosen_camera.get()]
             host_ip = chosen_camera["host_ip"]
             port = int(chosen_camera["port"])

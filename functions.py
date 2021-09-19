@@ -7,13 +7,14 @@ import PIL.Image
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib
+import time
 matplotlib.use('agg')
 
 
 class VideoCapture:
     def __init__(self, host_ip="0.0.0.0", port=9999):
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.client_socket.settimeout(10) # set timeout to be 10 seconds
+        self.client_socket.settimeout(5) # set timeout to be 5 seconds
         self.host_ip = host_ip
         self.port = port
         self.data = b""
@@ -23,6 +24,8 @@ class VideoCapture:
         if host_ip=="None":
             self.connected_to_server = False
             self.video = cv2.VideoCapture(0)
+            self.video.set(cv2.CAP_PROP_FPS, 60) # set camera fps if possible
+            self.video.set(cv2.CAP_PROP_BUFFERSIZE, 1)
             # self.video.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0.25)
             # self.video.set(cv2.CAP_PROP_EXPOSURE, -7)
 
