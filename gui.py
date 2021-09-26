@@ -332,4 +332,4 @@ class Camera_App:
 
 
 if __name__ == "__main__":
-    Camera_App(tk.Tk(), "Camera App", fps=30)
+    Camera_App(tk.Tk(), "OOLI", fps=30)
