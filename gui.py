@@ -25,7 +25,7 @@ class Camera_App:
         self.preview = None
 
         # Boolean continuous video
-        self.video_continuous = True
+        self.video_continuous = False
 
         # Details of available cameras
         with open("camera_list.json") as f:
@@ -284,7 +284,8 @@ class Camera_App:
             chosen_camera = self.camera_details[self.chosen_camera.get()]
             host_ip = chosen_camera["host_ip"]
             port = int(chosen_camera["port"])
-            self.video = VideoCapture(host_ip=host_ip, port=port)
+            name = self.chosen_camera.get()
+            self.video = VideoCapture(host_ip=host_ip, port=port, cameraname=name)
         except:
             self.chosen_camera.set("Laptop Webcam")
             chosen_camera = self.camera_details[self.chosen_camera.get()]

@@ -12,11 +12,12 @@ matplotlib.use('agg')
 
 
 class VideoCapture:
-    def __init__(self, host_ip="0.0.0.0", port=9999):
+    def __init__(self, host_ip="0.0.0.0", port=9999, cameraname='Kasia Camera'):
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client_socket.settimeout(5) # set timeout to be 5 seconds
         self.host_ip = host_ip
         self.port = port
+        self.cameraname = cameraname
         self.data = b""
         self.payload_size = struct.calcsize("Q")
 
@@ -33,6 +34,7 @@ class VideoCapture:
         else:
             try:
                 self.client_socket.connect((self.host_ip, self.port))
+                self.client_socket.send(self.cameraname.encode('ascii'))
                 self.connected_to_server = True
             except: # Raise exception
                 self.connected_to_server = False
