@@ -83,7 +83,7 @@ class Camera_App:
         self.camera_select_label.pack(side=tk.TOP)
         camera_list = list(self.camera_details.keys())
         self.chosen_camera = tk.StringVar()
-        self.chosen_camera.set("Laptop Webcam")
+        self.chosen_camera.set(camera_list[0])
         self.camera_selector = tk.OptionMenu(self.ui_canvas, self.chosen_camera, *camera_list)
         self.camera_selector.config(width=15, anchor=tk.CENTER)
         self.camera_selector.pack(side=tk.TOP)
