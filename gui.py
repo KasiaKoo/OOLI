@@ -72,7 +72,7 @@ class Camera_App:
 
         # add a canvas in which image feed and graphs will sit
         self.preview_canvas = tk.Canvas(self.window, width=self.res_x + self.reference_graph_height, height=self.res_y + self.reference_graph_height)
-        self.preview_canvas.grid(row=0, column=0)
+        self.preview_canvas.grid(row=0, column=0, sticky=tk.N)
 
         # add a canvas in which all the buttons will sit
         self.ui_canvas = tk.Frame(self.window)
@@ -315,7 +315,7 @@ class Camera_App:
         # check if preview res has been changed and update it
         self.change_preview_resolution()
 
-        # Get preview image and original-size image
+        # Get original-size image
         self.photo = self.video.get_video_frame()
 
         # get frame from camera and place it in window

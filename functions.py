@@ -108,7 +108,10 @@ class VideoCapture:
         plt.xlim(min_x, max_x)
         plt.ylim(min_y, max_y)
         # plt.axis('off')
-        plt.tight_layout()
+        plt.yticks([], [])
+        plt.grid()
+        plt.box(0)
+        plt.tight_layout(pad=0)
         figure.canvas.draw()
 
         plt.close(figure)
