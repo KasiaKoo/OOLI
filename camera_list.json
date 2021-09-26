@@ -5,10 +5,4 @@
 	"cam_type": "webcam",
 	"cam_num": "0"
     },
-    "Lab Camera": {
-	"host_ip": "155.198.193.196",
-	"port": "9999",
-	"cam_type": "webcam", 
-	"cam_num": "1"
-    }
 }

@@ -9,10 +9,17 @@ socketed data from detection devices.
 - Camera viewer app for viewing images from detectors
 
 ## Usage
-- Make the conda environment using:
+- Make and activate the conda environment for your system.
+
+For windows:
 ```sh
-conda env create -f environment.yml
-conda activate camera-viewer
+conda env create -f environment_windows.yml
+conda activate OOLI
+```
+For macOS/Linux:
+```sh
+conda env create -f environment_nix.yml
+conda activate OOLI
 ```
 - Then run the app using:
 ```sh
@@ -20,8 +27,8 @@ python gui.py
 ```
 
 ## Todo
-- [ ] Make environment system agnostic
-- [ ] Merge socketing project
+- [x] Make environment system agnostic
+- [x] Merge socketing project
 - [ ] Add beam measurement feature
 
 ## License
