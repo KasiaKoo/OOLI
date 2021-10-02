@@ -1,5 +1,5 @@
 from __future__ import with_statement
-from functions import VideoCapture
+from image_processing.functions import VideoCapture
 import tkinter as tk
 from tkinter import filedialog
 import PIL.Image
@@ -28,7 +28,7 @@ class Camera_App:
         self.video_continuous = False
 
         # Details of available cameras
-        with open("camera_list.json") as f:
+        with open("assets/camera_list.json") as f:
             self.camera_details = json.load(f)
 
         # Allowed preview resolutions (add any required)
@@ -60,7 +60,7 @@ class Camera_App:
         # make initial window
         self.window = window
         self.window.title(window_title)
-        self.window.iconphoto(True, tk.PhotoImage(file="app_icon.png"))
+        self.window.iconphoto(True, tk.PhotoImage(file="assets/app_icon.png"))
 
         # get monitor specs
         self.monitor_dpi = self.window.winfo_fpixels('1i') # get monitor dpi
@@ -329,7 +329,3 @@ class Camera_App:
 
         if self.video_continuous:
             self.window.after(self.delay, self.update)
-
-
-if __name__ == "__main__":
-    Camera_App(tk.Tk(), "OOLI", fps=30)

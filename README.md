@@ -16,9 +16,9 @@ For windows:
 conda env create -f environment_windows.yml
 conda activate OOLI
 ```
-For macOS/Linux:
+For macOS:
 ```sh
-conda env create -f environment_nix.yml
+conda env create -f environment_macos.yml
 conda activate OOLI
 ```
 - Then run the app using:
