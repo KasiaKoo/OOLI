@@ -13,17 +13,17 @@ socketed data from detection devices.
 
 For windows:
 ```sh
-conda env create -f environment_windows.yml
+conda env create -f environments/environment_windows.yml
 conda activate OOLI
 ```
 For macOS:
 ```sh
-conda env create -f environment_macos.yml
+conda env create -f environments/environment_macos.yml
 conda activate OOLI
 ```
 - Then run the app using:
 ```sh
-python gui.py
+python run.py
 ```
 
 ## Todo
