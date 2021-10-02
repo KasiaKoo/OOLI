@@ -1,5 +1,5 @@
 /images/
 /functions.pyc
 /.DS_Store
-/__pycache__/
+**/__pycache__/
 /typings/
