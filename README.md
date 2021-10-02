@@ -26,6 +26,9 @@ conda activate OOLI
 python run.py
 ```
 
+## Screenshots
+![App UI](./screenshots/app_ui.png)
+
 ## Todo
 - [x] Make environment system agnostic
 - [x] Merge socketing project
