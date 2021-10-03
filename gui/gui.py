@@ -14,6 +14,13 @@ class Camera_App:
     
     def __init__(self, window, window_title, fps=30):
 
+        """OOLI User Interface class
+
+        :param window: tk window object
+        :param window_title: Title to display in window
+        :param fps: Frames per second of preview feed
+
+        """
         # Make resources
         # ----------------------------------------------------------------------
 
@@ -164,6 +171,9 @@ class Camera_App:
 
 
     def take_snapshot(self):
+
+        """Saves a single image created from original image of current preview """
+
         image = PIL.Image.fromarray(self.photo)
         file = filedialog.asksaveasfile(mode="wb", defaultextension=".bmp", filetypes=(("Bitmap File", "*.bmp"),
                                                                                        ("PNG File", "*.png"),
@@ -177,6 +187,9 @@ class Camera_App:
 
 
     def toggle_video(self):
+
+        """Toggles whether preview video feed is continuous"""
+
         if self.video_continuous:
             self.continuous_button.config(relief=tk.RAISED, fg="red")
         else:
@@ -187,6 +200,9 @@ class Camera_App:
 
 
     def crop_horizontal(self):
+
+        """Crops the image horizontally based on user-input in GUI and redisplays previews"""
+
         try:
             self.horizontal_xmin = float(self.horizontal_xmin_entry.get())
             self.horizontal_xmax = float(self.horizontal_xmax_entry.get())
@@ -212,6 +228,9 @@ class Camera_App:
 
         
     def crop_vertical(self):
+
+        """Crops the image vertically based on user-input in GUI and redisplays previews"""
+
         try:
             self.vertical_xmin = float(self.vertical_xmin_entry.get())
             self.vertical_xmax = float(self.vertical_xmax_entry.get())
@@ -237,6 +256,9 @@ class Camera_App:
 
 
     def reset_crop(self, update=True):
+
+        """Resets crop on preview images and graphs"""
+
         self.vertical_xmin = None
         self.vertical_xmax = None
         self.horizontal_xmin = None
@@ -247,6 +269,9 @@ class Camera_App:
 
 
     def make_preview_image(self):
+
+        """Constructs preview image from image array and places in GUI"""
+
         self.preview = self.video.make_cropped_image(self.photo,
                                                      cmap=self.chosen_filter.get(),
                                                      dpi=self.monitor_dpi,
@@ -260,18 +285,27 @@ class Camera_App:
         
 
     def make_horizontal_graph(self):
+
+        """Constructs horizontal intensity graph from image array and places in GUI"""
+
         graph = self.video.make_graph(self.preview, axis=0, dpi=self.monitor_dpi, graph_height=self.reference_graph_height, min_x=self.horizontal_xmin, max_x=self.horizontal_xmax)
         self.graph1 = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(graph))
         self.preview_canvas.create_image(0, self.image.height(), image=self.graph1, anchor=tk.NW)
 
 
     def make_vertical_graph(self):
+
+        """Constructs vertical intensity graph from image array and places in GUI"""
+
         graph = self.video.make_graph(self.preview, axis=1, dpi=self.monitor_dpi, graph_height=self.reference_graph_height, min_x=self.vertical_xmin, max_x=self.vertical_xmax)
         self.graph2 = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(graph))
         self.preview_canvas.create_image(self.image.width(), 0, image=self.graph2, anchor=tk.NW)
 
 
     def change_preview_resolution(self):
+
+        """Changes preview resolution according to user selection in drop down menu"""
+
         # check to see if the preview resolution has been changed
         self.res_x, self.res_y = self.resolutions[self.chosen_res.get()]
 
@@ -280,6 +314,9 @@ class Camera_App:
 
 
     def connect_to_camera(self):
+
+        """Sets video class to connect to chosen camera from drop-down menu"""
+
         try:
             chosen_camera = self.camera_details[self.chosen_camera.get()]
             host_ip = chosen_camera["host_ip"]
@@ -295,6 +332,9 @@ class Camera_App:
 
 
     def open_server_list(self):
+
+        """Opens server list json file in default system text editor"""
+
         if sys.platform == "win32":
             os.startfile("camera_list.json")
         else:
@@ -303,6 +343,9 @@ class Camera_App:
 
 
     def update_all(self):
+
+        """Update all elements in the GUI"""
+
         self.connect_to_camera()
         self.change_preview_resolution()
         self.make_preview_image()
@@ -311,6 +354,8 @@ class Camera_App:
 
 
     def update(self):
+
+        """Update loop which checks for user changes and redisplays images"""
 
         # check if preview res has been changed and update it
         self.change_preview_resolution()

@@ -13,6 +13,14 @@ matplotlib.use('agg')
 
 class VideoCapture:
     def __init__(self, host_ip="0.0.0.0", port=9999, cameraname='Kasia Camera'):
+
+        """Video class that controls connecting to server and returning images to gui
+
+        :param host_ip: IP address of server hosting camera
+        :param port: Open port on server where camera is hosted
+        :param cameraname: Name of camera stored in camera list dictionary
+
+        """
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client_socket.settimeout(5) # set timeout to be 5 seconds
         self.host_ip = host_ip
@@ -44,6 +52,11 @@ class VideoCapture:
 
     def get_video_frame(self):
 
+        """Connects to chosen server and gets single frame to return to gui
+
+        :returns: Grayscale single image array
+
+        """
         # if testing, then return laptop webcam feed
         if self.connected_to_server == False:
             ret, img = self.video.read()
@@ -71,6 +84,20 @@ class VideoCapture:
 
 
     def make_cropped_image(self, original_img, cmap="jet", dpi=100, resolution=(854,480), min_x=None, max_x=None, min_y=None, max_y=None):
+
+        """Takes original image array and returns cropped image given x and y limits
+
+        :param original_img: Original image array
+        :param cmap: Chosen colour map
+        :param dpi: DPI of display screen
+        :param resolution: Chosen resolution for preview
+        :param min_x: X lower limit for crop
+        :param max_x: X upper limit for crop
+        :param min_y: Y lower limit for crop
+        :param max_y: Y upper limit for crop
+        :returns: Cropped image array
+
+        """
         width, height = resolution
         figure = plt.figure(figsize=(width/dpi, height/dpi), dpi=dpi)
         plt.imshow(original_img, cmap=cmap, aspect="auto")
@@ -89,6 +116,19 @@ class VideoCapture:
 
     def make_graph(self, preview_img, axis=0, dpi=100, graph_height=100, min_x=None, max_x=None, min_y=None, max_y=None):
 
+        """Takes preview image and returns X and Y intensity graphs
+
+        :param preview_img: Preview image to construct graphs for
+        :param axis: If 0, return horizontal graph. Else, return vertical graph
+        :param dpi: DPI of display screen
+        :param graph_height: Height of output horizontal graph (width for vertical graphs)
+        :param min_x: X lower limit for pixel number
+        :param max_x: X upper limit for pixel number
+        :param min_y: Y lower limit for pixel number
+        :param max_y: Y upper limit for pixel number
+        :returns: Image array of intensity graph
+
+        """
         # convert to greyscale if in rgb
         if len(preview_img.shape) > 2:
             rgb_weights = [0.2989, 0.5870, 0.1140]
