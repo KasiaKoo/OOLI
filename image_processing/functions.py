@@ -43,9 +43,9 @@ class VideoCapture:
         if host_ip=="Basler":
             self.connected_to_server = True
             self.basler = True
-            camera = pylon.InstantCamera(pylon.TlFactory.GetInstance().CreateFirstDevice())    
-            camera.Open() 
-            camera.StartGrabbing()
+            self.video = pylon.InstantCamera(pylon.TlFactory.GetInstance().CreateFirstDevice())    
+            self.video.Open() 
+            self.video.StartGrabbing()
 
         # otherwise, connect to server
         else:
@@ -74,7 +74,7 @@ class VideoCapture:
             return original_img
 
         if self.basler == True:
-            grabResult = camera.RetrieveResult(5000, pylon.TimeoutHandling_ThrowException)
+            grabResult = self.video.RetrieveResult(5000, pylon.TimeoutHandling_ThrowException)
             img = grabResult.Array
             img = imutils.resize(frame, width=320)
             original_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # not sure if this is necessary
