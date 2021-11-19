@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib
 import time
+from pypylon import pylon
 matplotlib.use('agg')
 
 
@@ -28,6 +29,7 @@ class VideoCapture:
         self.cameraname = cameraname
         self.data = b""
         self.payload_size = struct.calcsize("Q")
+        self.basler = False
 
         # if testing, then connect to laptop webcam
         if host_ip=="None":
@@ -37,6 +39,13 @@ class VideoCapture:
             self.video.set(cv2.CAP_PROP_BUFFERSIZE, 1)
             # self.video.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0.25)
             # self.video.set(cv2.CAP_PROP_EXPOSURE, -7)
+
+        if host_ip=="Basler":
+            self.connected_to_server = True
+            self.basler = True
+            camera = pylon.InstantCamera(pylon.TlFactory.GetInstance().CreateFirstDevice())    
+            camera.Open() 
+            camera.StartGrabbing()
 
         # otherwise, connect to server
         else:
@@ -63,6 +72,14 @@ class VideoCapture:
             original_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
             return original_img
+
+        if self.basler == True:
+            grabResult = camera.RetrieveResult(5000, pylon.TimeoutHandling_ThrowException)
+            img = grabResult.Array
+            img = imutils.resize(frame, width=320)
+            original_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # not sure if this is necessary
+            return frame
+            
 
         # otherwise, return server camera feed
         while len(self.data) < self.payload_size:
