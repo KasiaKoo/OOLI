@@ -4,5 +4,12 @@
 	"port": "0",
 	"cam_type": "webcam",
 	"cam_num": "0"
+    },
+    
+    "Basler:" {
+	"host_ip": "Basler",
+	"port": "0",
+	"cam_type": "basler",
+	"cam_num": "1"
     }
 }
