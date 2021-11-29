@@ -6,7 +6,7 @@
 	"cam_num": "0"
     },
     
-    "Basler:" {
+    "Basler": {
 	"host_ip": "Basler",
 	"port": "0",
 	"cam_type": "basler",

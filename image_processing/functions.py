@@ -30,18 +30,19 @@ class VideoCapture:
         self.data = b""
         self.payload_size = struct.calcsize("Q")
         self.basler = False
-
+        print('host ip', host_ip)
         # if testing, then connect to laptop webcam
         if host_ip=="None":
             self.connected_to_server = False
             self.video = cv2.VideoCapture(0)
             self.video.set(cv2.CAP_PROP_FPS, 60) # set camera fps if possible
             self.video.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+            print('i am here')
             # self.video.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0.25)
             # self.video.set(cv2.CAP_PROP_EXPOSURE, -7)
 
-        if host_ip=="Basler":
-            self.connected_to_server = True
+        elif host_ip=="Basler":
+            self.connected_to_server = False
             self.basler = True
             self.video = pylon.InstantCamera(pylon.TlFactory.GetInstance().CreateFirstDevice())    
             self.video.Open() 
