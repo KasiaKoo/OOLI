@@ -6,6 +6,7 @@ import PIL.Image
 import PIL.ImageTk
 import json
 import os, sys, subprocess
+import imutils
 
 class Camera_App:
 
@@ -353,8 +354,8 @@ class Camera_App:
         self.connect_to_camera()
         self.change_preview_resolution()
         self.make_preview_image()
-        self.make_horizontal_graph()
-        self.make_vertical_graph()
+        # self.make_horizontal_graph()
+        # self.make_vertical_graph()
 
 
     def update(self):
@@ -371,10 +372,10 @@ class Camera_App:
         self.make_preview_image()
 
         # make horizontal graph
-        self.make_horizontal_graph()
+        # self.make_horizontal_graph()
 
         # make vertical graph
-        self.make_vertical_graph()
+        # self.make_vertical_graph()
 
         if self.video_continuous:
             self.window.after(self.delay, self.update)
