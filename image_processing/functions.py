@@ -62,6 +62,7 @@ class VideoCapture:
                 raise Exception("Could not connect to server!")
 
 
+            
     def get_video_frame(self):
 
         """Connects to chosen server and gets single frame to return to gui
@@ -182,3 +183,166 @@ class VideoCapture:
             graph = cv2.rotate(graph, cv2.ROTATE_90_CLOCKWISE)
 
         return graph
+
+class PhotoCapture:
+    def __init__(self, host_ip="0.0.0.0", port=9999, cameraname='Kasia Camera',cameratype='webcam'):
+
+        """Video class that controls connecting to server and returning images to gui
+
+        :param host_ip: IP address of server hosting camera
+        :param port: Open port on server where camera is hosted
+        :param cameraname: Name of camera stored in camera list dictionary
+
+        """
+        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client_socket.settimeout(5) # set timeout to be 5 seconds
+        self.host_ip = host_ip
+        self.port = port
+        self.cameraname = cameraname
+        self.cameratype = cameratype
+        self.data = b""
+        self.payload_size = struct.calcsize("Q")
+        self.basler = False
+        self.converter = pylon.ImageFormatConverter()
+        self.set_camera_params()
+
+        # if testing, then connect to laptop webcam
+        if host_ip=="None":
+            self.connected_to_server = False
+            self.camera = cv2.VideoCapture(0)
+
+
+        elif host_ip=="Basler":
+            self.connected_to_server = True
+            self.basler = True
+            self.camera = pylon.InstantCamera(pylon.TlFactory.GetInstance().CreateFirstDevice())    
+            self.camera.Open() 
+            self.camera.StartGrabbing()
+
+        # otherwise, connect to server
+        else:
+            try:
+                self.client_socket.connect((self.host_ip, self.port))
+                self.client_socket.send(self.cameraname.encode('ascii'))
+                self.connected_to_server = True
+            except: # Raise exception
+                self.connected_to_server = False
+                print("Could not connect to server!")
+                raise Exception("Could not connect to server!")
+
+
+    
+    def release(self):
+        if self.basler == True:
+            self.camera.Close()
+        elif self.connected_to_server ==False:
+            self.camera.release()
+            cv2.destroyAllWindows()
+        else:
+            self.client_socket.close()
+
+    def change_gain(self, gain_val):
+        if self.basler == True:
+            self.camera.ExposureTime
+        elif self.connected_to_server == False:
+            print(self.camera.get(cv2.CAP_PROP_GAIN))
+            self.camera.set(cv2.CAP_PROP_GAIN, gain_val)
+            print('changed gain to',self.camera.get(cv2.CAP_PROP_GAIN))
+        else:
+            print('Need to write socketing function for that')
+
+    def set_camera_params(self):
+        if self.cameratype == 'basler':
+            self.exposuretime_min = 13
+            self.exposuretime_max = 10000000
+            self.gain_min = 0.
+            self.gain_max = 27.04
+        elif self.cameratype == 'webcam':
+            self.exposuretime_min = -15
+            self.exposuretime_max = 0
+            self.gain_min = 2
+            self.gain_max = 255
+        else:
+            print('unknown camera type - disconnecting')
+            self.release()
+
+    def change_exposure(self, exp_val):
+        if self.basler == True:
+            print(' for basler not set yet')
+        elif self.connected_to_server == False:
+            print(self.camera.get(cv2.CAP_PROP_EXPOSURE))
+            self.camera.set(cv2.CAP_PROP_EXPOSURE, exp_val)
+
+            print(self.camera.get(cv2.CAP_PROP_EXPOSURE))
+        else:
+            print('Need to write socketing function for that')
+
+    def get_photo(self):
+
+        """Connects to chosen server and gets single frame to return to gui
+
+        :returns: Grayscale single image array
+
+        """
+        # if testing, then return laptop webcam feed
+        if self.connected_to_server == False:
+            ret, img = self.camera.read()
+            original_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+            return original_img
+
+        if self.basler == True:
+            grabResult = self.camera.RetrieveResult(100, pylon.TimeoutHandling_ThrowException)
+            img = grabResult.Array
+            print(img.shape)
+            # original_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # not sure if this is necessary
+            return img
+            
+
+        # otherwise, return server camera feed
+        while len(self.data) < self.payload_size:
+            packet = self.client_socket.recv(4 * 1024)
+            if not packet:
+                break
+            self.data += packet
+        packed_msg_size = self.data[: self.payload_size]
+        self.data = self.data[self.payload_size :]
+        msg_size = struct.unpack("Q", packed_msg_size)[0]
+        while len(self.data) < msg_size:
+            self.data += self.client_socket.recv(4 * 1024)
+        frame_data = self.data[:msg_size]
+        self.data = self.data[msg_size:]
+
+        original_img = pickle.loads(frame_data)
+
+        return original_img
+
+    def make_cropped_image(self, original_img, cmap="jet", dpi=100, resolution=(854,480), min_x=None, max_x=None, min_y=None, max_y=None, alpha = None, beta=None, inter=None):
+
+        """Takes original image array and returns cropped image given x and y limits
+
+        :param original_img: Original image array
+        :param cmap: Chosen colour map
+        :param dpi: DPI of display screen
+        :param resolution: Chosen resolution for preview
+        :param min_x: X lower limit for crop
+        :param max_x: X upper limit for crop
+        :param min_y: Y lower limit for crop
+        :param max_y: Y upper limit for crop
+        :returns: Cropped image array
+
+        """
+        width, height = resolution
+        figure = plt.figure(figsize=(width/dpi, height/dpi), dpi=dpi)
+        plt.imshow(original_img, cmap=cmap, aspect="auto", alpha = alpha, interpolation=inter)
+        plt.xlim(min_x, max_x)
+        plt.ylim(max_y, min_y) # this has to be reversed since the numbers on the vert graph are reverse of the image
+        plt.axis("off")
+        plt.tight_layout(pad=0)
+        figure.canvas.draw()
+        plt.close(figure)
+
+        preview_img = np.fromstring(figure.canvas.tostring_rgb(), dtype=np.uint8, sep="")
+        preview_img = preview_img.reshape(figure.canvas.get_width_height()[::-1] + (3,))
+
+        return preview_img
