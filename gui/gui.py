@@ -1,6 +1,7 @@
 from __future__ import with_statement
 from image_processing.functions import VideoCapture
 from image_processing.functions import PhotoCapture
+from image_processing.functions import PhotoLoader
 import tkinter as tk
 from tkinter import filedialog
 import PIL.Image
@@ -277,7 +278,7 @@ class Camera_App:
         """Constructs preview image from image array and places in GUI"""
 
         self.preview = self.video.make_cropped_image(self.photo,
-                                                     cmap=self.chosen_filter.get(),
+                                                     cmap=self.chosen_filter,
                                                      dpi=self.monitor_dpi,
                                                      resolution=(self.res_x, self.res_y),
                                                      min_x=self.horizontal_xmin,
@@ -410,12 +411,14 @@ class Detector_App:
         #Camera parameters
         self.camera_connected = tk.BooleanVar()
         self.camera_connected.set(False)
+        self.dir = None
 
 
         #Saving parameters
         self.save_dir = 'None'
         self.save_post = False
         self.save_raw = False
+        self.save_dir=None
         
 
         # Details of available cameras
@@ -446,9 +449,7 @@ class Detector_App:
         self.horizontal_xmax = None
         self.vertical_xmin = None
         self.vertical_xmax = None
-        self.dir=None
-        self.alpha = None
-        self.beta = None
+        
 
         # Make GUI
         # ----------------------------------------------------------------------
@@ -466,7 +467,7 @@ class Detector_App:
         self.window.geometry(str(self.xres)+"x"+str(self.yres))
 
         # add a canvas in which image feed and graphs will sit
-        self.preview_canvas = tk.Canvas(self.window, width=self.res_x, height=self.res_y)
+        self.preview_canvas = tk.Canvas(self.window, width=self.res_x+20, height=self.res_y+10)
         self.preview_canvas.grid(row=0, column=0, sticky=tk.N)
 
         """________UI Canvases___________________________"""
@@ -514,7 +515,7 @@ class Detector_App:
         self.dir_button = tk.Button(self.camera_canvas, text = 'Choose File Directory', command = self.dir_selector)
         self.dir_button.pack()
         self.dir_text = tk.StringVar()
-        self.dir_text.set('No Current Path Chosen')
+        self.dir_text.set('Current Directory')
         self.dir_label = tk.Label(self.camera_canvas, textvariable=self.dir_text, width=20, anchor=tk.E)
         self.dir_label.pack()
         self.loadfile_button = tk.Button(self.camera_canvas, text = 'Load File', command=self.loadfile, initialdir=self.dir)
@@ -545,6 +546,7 @@ class Detector_App:
         self.filter_selector = tk.OptionMenu(self.drop_canvas, self.chosen_filter, *filters, command=self.change_cmp)
         self.filter_selector.pack()
 
+        # add dropdown menu for interpolation
         self.inter_dropdown_label = tk.Label(self.drop_canvas, text="Interpolation Map")
         self.inter_dropdown_label.pack()
         self.chosen_inter = tk.StringVar()
@@ -553,32 +555,26 @@ class Detector_App:
         self.inter_selector.pack()
 
         # add processing scales
-        self.contrast_scale = tk.Scale(self.scale_canvas, from_=0., to=1., orient=tk.HORIZONTAL)
+
+        #add scale for contrast
+        self.gamma=tk.DoubleVar()
+        self.gamma.set(1)
+        self.contrast_scale = tk.Scale(self.scale_canvas, from_=1, to=0.01, orient=tk.HORIZONTAL, resolution=0.01)
+        self.contrast_scale.set(1)
         self.contrast_scale.bind("<ButtonRelease-1>", self.change_contrast)
         self.contrast_scale.grid(column=0, row=0)
         self.contrast_label = tk.Label(self.scale_canvas, text='Contrast')
         self.contrast_label.grid(column=0,row=1)
 
-        self.exposure_scale = tk.Scale(self.scale_canvas, from_=-127, to=127,  orient=tk.HORIZONTAL)
-        self.contrast_scale.bind("<ButtonRelease-1>", self.change_brightness)
-        self.exposure_scale.grid(column=1, row=0)
-        self.exposure_label = tk.Label(self.scale_canvas, text='Exposure')
-        self.exposure_label.grid(column=1,row=1)
-
-        self.shadows_scale = tk.Scale(self.scale_canvas, from_=0, to=100,  orient=tk.HORIZONTAL)
-        self.shadows_scale.grid(column=2,row=0)
-        self.shadows_label = tk.Label(self.scale_canvas, text='Shadows')
-        self.shadows_label.grid(column=2,row=1)
-
-        self.higlights_scale = tk.Scale(self.scale_canvas, from_=0, to=100,  orient=tk.HORIZONTAL)
-        self.higlights_scale.grid(column=3,row=0)
-        self.higlights_label = tk.Label(self.scale_canvas, text='Highlights')
-        self.higlights_label.grid(column=3,row=1)
-
-        self.sharpness_scale = tk.Scale(self.scale_canvas, from_=0, to=100,  orient=tk.HORIZONTAL)
-        self.sharpness_scale.grid(column=4,row=0)
-        self.sharpness_label = tk.Label(self.scale_canvas, text='Sharpness')
-        self.sharpness_label.grid(column=4,row=1)
+        #add scale for vmax
+        self.vmax=tk.IntVar()
+        self.vmax.set(255)
+        self.vmax_scale = tk.Scale(self.scale_canvas, from_=1, to=255, orient=tk.HORIZONTAL)
+        self.vmax_scale.set(255)
+        self.vmax_scale.bind("<ButtonRelease-1>", self.change_vmax)
+        self.vmax_scale.grid(column=1, row=0)
+        self.vmax_label = tk.Label(self.scale_canvas, text='Max Value')
+        self.vmax_label.grid(column=1,row=1)
 
         """___________Saving Options______________________________________"""
         # add snapshot button
@@ -586,19 +582,17 @@ class Detector_App:
         self.savedir_button.pack()
 
         self.savedir_text = tk.StringVar()
-        self.savedir_text.set('No Current Path Chosen')
+        self.savedir_text.set('Current Directory')
         self.savedir_label = tk.Label(self.save_canvas, textvariable=self.savedir_text)
         self.savedir_label.pack()
-
-        self.snapshot_button = tk.Button(self.save_canvas, text="Save", width=17, command=self.save_image)
-        self.snapshot_button.pack()
         
         self.raw_saving = tk.Checkbutton(self.save_canvas, text='Raw', variable=self.save_raw)
         self.raw_saving.pack()
         
         self.post_saving = tk.Checkbutton(self.save_canvas, text='Processed', variable=self.save_post)
         self.post_saving.pack()
-
+        self.savefile_button = tk.Button(self.save_canvas, text = 'Save', command=self.savefile, initialdir=self.save_dir)
+        self.savefile_button.pack()
         # Start app
         # ----------------------------------------------------------------------
 
@@ -655,11 +649,11 @@ class Detector_App:
         """Update loop which checks for user changes and redisplays images"""
         pass
 
-    def save_image(self):
+    def savefile(self):
         """Saves a single image created from original image of current preview """
 
         # image = PIL.Image.fromarray(self.photo)
-        file = filedialog.asksaveasfile(mode="wb", defaultextension=".bmp", filetypes=(("Bitmap File", "*.bmp"),
+        file = filedialog.asksaveasfile(mode="wb", defaultextension=".bmp",initialdir=self.save_dir, filetypes=(("Bitmap File", "*.bmp"),
                                                                                        ("PNG File", "*.png"),
                                                                                        ("JPEG File", "*.jpg"),
                                                                                        ("All Files", "*.*")))
@@ -676,11 +670,12 @@ class Detector_App:
                                                                                        ("PNG File", "*.png"),
                                                                                        ("JPEG File", "*.jpg"),
                                                                                        ("All Files", "*.*")))
+
         if file:            
             self.photo = PIL.Image.open(file)
-
-
-            self.preview = self.camera.make_cropped_image(self.photo,cmap=self.chosen_filter.get(),dpi=self.monitor_dpi,resolution=(self.res_x,self.res_y), alpha = self.alpha, beta = self.beta)
+            self.camera = PhotoLoader()
+            self.camera_connected.set(False)
+            self.preview = self.camera.make_cropped_image(self.photo,cmap=self.chosen_filter.get(),dpi=self.monitor_dpi,resolution=(self.res_x,self.res_y), gamma = self.gamma.get(), vmax=self.vmax.get()) 
             self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
             self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
             print("Image {} opened!".format(file))
@@ -688,11 +683,11 @@ class Detector_App:
             print("Could not open image!")
 
     def dir_selector(self):
-        self.dir = filedialog.askdirectory()
+        self.dir = filedialog.askdirectory(initialdir=os.getcwd())
         self.dir_text.set('Load file from: '+ self.dir)
 
     def savedir_selector(self):
-        self.save_dir = filedialog.askdirectory()
+        self.save_dir = filedialog.askdirectory(initialdir=os.getcwd())
         self.savedir_text.set('Saving to '+self.save_dir)
 
     def take_photo(self):
@@ -700,16 +695,12 @@ class Detector_App:
         try:
             self.photo = PIL.Image.fromarray(self.camera.get_photo())
 
-            self.preview = self.camera.make_cropped_image(self.photo,cmap=self.chosen_filter.get(),dpi=self.monitor_dpi,resolution=(self.res_x,self.res_y), alpha = self.alpha, beta = self.beta)
+            self.preview = self.camera.make_cropped_image(self.photo,cmap=self.chosen_filter.get(),dpi=self.monitor_dpi,resolution=(self.res_x,self.res_y), gamma = self.gamma.get(), vmax=self.vmax.get()) 
             self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
             self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
         # else:
         except:
             print('No Connected Camera')
-        
-    def check_scale(self,event):
-        x = self.contrast_scale.get()
-        print('Contrast scale is', x)
 
     def check_camera(self):
         if self.camera_connected.get() == True:
@@ -731,30 +722,37 @@ class Detector_App:
             print('No camera connected')
 
     def change_cmp(self,choice):
-        self.preview = self.camera.make_cropped_image(self.photo,cmap=choice,dpi=self.monitor_dpi,resolution=(self.res_x,self.res_y))
-        self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
-        self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
-        
+        if self.photo != None:
+            self.preview = self.camera.make_cropped_image(self.photo,cmap=self.chosen_filter.get(),dpi=self.monitor_dpi,resolution=(self.res_x,self.res_y), gamma = self.gamma.get(), vmax=self.vmax.get()) 
+            self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
+            self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
+        else:
+            print('No Picture to Edit')
+
     def change_inter(self,choice):
-        self.preview = self.camera.make_cropped_image(self.photo,cmap=self.chosen_filter.get(),dpi=self.monitor_dpi,resolution=(self.res_x,self.res_y), inter = choice)
-        self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
-        self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
+        if self.photo != None:
+            self.preview = self.camera.make_cropped_image(self.photo,cmap=self.chosen_filter.get(),dpi=self.monitor_dpi,resolution=(self.res_x,self.res_y), gamma = self.gamma.get(), vmax=self.vmax.get()) 
+            self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
+            self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
+        else: 
+            print('No Picture to Edit')
+
     def change_contrast(self,event):
-        self.alpha = self.contrast_scale.get()
-        if self.camera_connected.get() == True:
-            self.preview = self.camera.make_cropped_image(self.photo,cmap=self.chosen_filter,dpi=self.monitor_dpi,resolution=(self.res_x,self.res_y), alpha = self.alpha, beta = self.beta)
+        self.gamma.set(self.contrast_scale.get())
+        if self.photo != None:
+            self.preview = self.camera.make_cropped_image(self.photo,cmap=self.chosen_filter.get(),dpi=self.monitor_dpi,resolution=(self.res_x,self.res_y), gamma = self.gamma.get(), vmax=self.vmax.get()) 
             self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
             self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
 
         else:
-            print('No camera connected')
+            print('No Picture to Edit')
 
-    def change_brightness(self,event):
-        self.beta = self.exposure_scale.get()
-        if self.camera_connected.get() == True:
-            self.preview = self.camera.make_cropped_image(self.photo,cmap=self.chosen_filter.get(),dpi=self.monitor_dpi,resolution=(self.res_x,self.res_y), alpha = self.alpha, beta = self.beta)
+    def change_vmax(self,event):
+        self.vmax.set(self.vmax_scale.get())
+        if self.photo != None:
+            self.preview = self.camera.make_cropped_image(self.photo,cmap=self.chosen_filter.get(),dpi=self.monitor_dpi,resolution=(self.res_x,self.res_y), gamma = self.gamma.get(), vmax=self.vmax.get()) 
             self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
             self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
 
         else:
-            print('No camera connected')
+            print('No Picture to Edit')

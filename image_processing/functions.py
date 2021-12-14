@@ -184,6 +184,47 @@ class VideoCapture:
 
         return graph
 
+class PhotoLoader:
+    def __init__(self):
+
+        """Video class that controls connecting to server and returning images to gui
+
+        :param host_ip: IP address of server hosting camera
+        :param port: Open port on server where camera is hosted
+        :param cameraname: Name of camera stored in camera list dictionary
+
+        """
+        
+    def make_cropped_image(self, original_img, cmap="jet", dpi=100, resolution=(854,480), min_x=None, max_x=None, min_y=None, max_y=None, inter=None, gamma=1,vmax= 255):
+
+        """Takes original image array and returns cropped image given x and y limits
+
+        :param original_img: Original image array
+        :param cmap: Chosen colour map
+        :param dpi: DPI of display screen
+        :param resolution: Chosen resolution for preview
+        :param min_x: X lower limit for crop
+        :param max_x: X upper limit for crop
+        :param min_y: Y lower limit for crop
+        :param max_y: Y upper limit for crop
+        :returns: Cropped image array
+
+        """
+        width, height = resolution
+        figure = plt.figure(figsize=(width/dpi, height/dpi), dpi=dpi)
+        bright_im = ((np.array(original_img)/255)**float(gamma))*255
+        plt.imshow(bright_im, cmap=cmap, aspect="auto", interpolation=inter, vmax=vmax)
+        plt.xlim(min_x, max_x)
+        plt.ylim(max_y, min_y) # this has to be reversed since the numbers on the vert graph are reverse of the image
+        plt.axis()
+        plt.tight_layout(pad=0)
+        figure.canvas.draw()
+        plt.close(figure)
+
+        preview_img = np.fromstring(figure.canvas.tostring_rgb(), dtype=np.uint8, sep="")
+        preview_img = preview_img.reshape(figure.canvas.get_width_height()[::-1] + (3,))
+
+        return preview_img
 class PhotoCapture:
     def __init__(self, host_ip="0.0.0.0", port=9999, cameraname='Kasia Camera',cameratype='webcam'):
 
@@ -317,7 +358,7 @@ class PhotoCapture:
 
         return original_img
 
-    def make_cropped_image(self, original_img, cmap="jet", dpi=100, resolution=(854,480), min_x=None, max_x=None, min_y=None, max_y=None, alpha = None, beta=None, inter=None):
+    def make_cropped_image(self, original_img, cmap="jet", dpi=100, resolution=(854,480), min_x=None, max_x=None, min_y=None, max_y=None, inter=None, gamma=1,vmax= 255):
 
         """Takes original image array and returns cropped image given x and y limits
 
@@ -333,11 +374,13 @@ class PhotoCapture:
 
         """
         width, height = resolution
-        figure = plt.figure(figsize=(width/dpi, height/dpi), dpi=dpi)
-        plt.imshow(original_img, cmap=cmap, aspect="auto", alpha = alpha, interpolation=inter)
+        figure = plt.figure(figsize=((width+20)/dpi, (height+10)/dpi), dpi=dpi)
+        bright_im = ((np.array(original_img)/255)**float(gamma))*255
+        plt.imshow(bright_im, cmap=cmap, aspect="auto", interpolation=inter, vmax=vmax)
         plt.xlim(min_x, max_x)
         plt.ylim(max_y, min_y) # this has to be reversed since the numbers on the vert graph are reverse of the image
-        plt.axis("off")
+        plt.axis()
+        plt.colorbar()
         plt.tight_layout(pad=0)
         figure.canvas.draw()
         plt.close(figure)
