@@ -13,7 +13,7 @@ class ThorLabsStage():
         self.parameters = self.stage.get_stage_axis_info()
 
         self.position_lower, self.position_upper = self.get_position_limits()
-        self.hold = False
+        self.lock = False
 
 
     def get_position(self):
@@ -35,21 +35,24 @@ class ThorLabsStage():
 
 
     def set_position(self, new_value):
-        if self.hold is False:
+        if self.lock is False:
             self.stage.move_to(new_value, blocking=False)
         else:
             print("Cannot move, lock is active")
 
 
-    def toggle_lock(self):
+    def enable_lock(self):
         is_in_motion = self.stage.is_in_motion
         while is_in_motion:
             print("Waiting to lock...")
             time.sleep(0.5)
             is_in_motion = self.stage.is_in_motion
 
-        self.hold = not self.hold
-        print("Lock:", self.hold)
+        self.lock = True
+
+    def disable_lock(self):
+        self.lock = False
+
 
 
 
