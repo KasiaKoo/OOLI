@@ -1,5 +1,6 @@
 from instrument_control.camera import *
 from instrument_control.stage import *
+import time
 
 my_camera = Camera("Basler").initiate()
 
@@ -34,6 +35,18 @@ print(my_stage.position)
 print(my_stage.position_lower, my_stage.position_upper)
 
 print("Changing Stage Position to 2...")
+my_stage.hold = False
 my_stage.set_position(2)
-print(my_stage.position)
 
+if my_stage.moving == False:
+    my_stage.hold = True
+
+print(my_stage.position)
+print(my_stage.hold)
+
+
+time.sleep(3)
+if my_stage.moving == False:
+    my_stage.hold = True
+print(my_stage.position)
+print(my_stage.hold)
