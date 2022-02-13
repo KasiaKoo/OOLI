@@ -1,4 +1,5 @@
 import thorlabs_apt as apt
+import time
 
 class ThorLabsStage():
     """
@@ -11,7 +12,7 @@ class ThorLabsStage():
 
         self.position = self.get_position()
         self.position_lower, self.position_upper = self.get_position_limits()
-        self.hold = True
+        self.hold = False
 
     def get_position(self):
         return self.stage.position
@@ -23,7 +24,19 @@ class ThorLabsStage():
         return lower, upper
 
     def set_position(self, new_value):
-        self.stage.move_to(new_value, blocking=False)
+        if self.hold is False:
+            self.stage.move_to(new_value, blocking=False)
+        else:
+            print("Cannot move, lock is active")
+
+    def toggle_lock(self):
+        is_in_motion = self.stage.is_in_motion
+        while is_in_motion:
+            time.sleep(0.5)
+            is_in_motion = self.stage.is_in_motion
+
+        self.hold = self.hold * -1
+        print("Lock:", self.hold)
 
 
 
