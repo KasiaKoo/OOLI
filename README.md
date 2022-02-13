@@ -8,31 +8,10 @@ socketed data from detection devices.
 - Manage and edit a server list for connection to different devices
 - Camera viewer app for viewing images from detectors
 
-## Usage
-- Make and activate the conda environment for your system.
-
-For windows:
-```sh
-conda env create -f environments/environment_windows.yml
-conda activate OOLI
-```
-For macOS:
-```sh
-conda env create -f environments/environment_macos.yml
-conda activate OOLI
-```
-- Then run the app using:
-```sh
-python run.py
-```
-
-## Screenshots
-![App UI](./screenshots/app_ui.png)
-
-## Todo
-- [x] Make environment system agnostic
-- [x] Merge socketing project
-- [ ] Add beam measurement feature
+## Setup
+- Create the conda environment from the environment files
+- If using ThorLabs stages, copy `APT.dll` from `C:/Program
+  Files/ThorLabs/APT/APT Server` to `C:/Windows/System32`
 
 ## License
 This project is licensed under the terms of the GNU General Public License v3.0.
