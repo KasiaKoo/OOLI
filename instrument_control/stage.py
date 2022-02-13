@@ -7,20 +7,27 @@ class Stage:
     """
     def __init__(self, name):
         self.name = name
-        self.model, self.stage_number = self.get_model("assets/stage_list.json")
+        self.model, self.stage_number, self.lower, self.upper = self.get_info("assets/stage_list.json")
 
 
     def initiate(self):
         if self.model == "ThorLabs":
-            return ThorLabsStage(self.stage_number)
+            stage = ThorLabsStage(self.stage_number, self.lower, self.upper)
+
+        elif self.model == "SmarAct":
+            pass
+
+        stage.set_position_limits(self.lower, self.upper)
+        return stage
 
 
-    def get_model(self, stage_list):
+    def get_info(self, stage_list):
         with open(stage_list) as f:
             stage_dict = json.load(f)
 
         model = stage_dict[self.name]["Model"]
         stage_number = stage_dict[self.name]["Stage Number"]
-        print(stage_number)
+        lower = stage_dict[self.name]["Minimum"]
+        upper = stage_dict[self.name]["Maximum"]
 
-        return model, stage_number
+        return model, stage_number, lower, upper
