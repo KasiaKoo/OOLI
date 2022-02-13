@@ -2,7 +2,7 @@ from instrument_control.camera import *
 from instrument_control.stage import *
 import time
 
-my_camera = Camera("Basler").initiate()
+my_camera = Camera("Solid HHG Detector").initiate()
 
 print("Camera Params")
 print("-----------------")
@@ -12,8 +12,8 @@ print(my_camera.gain)
 print(my_camera.gain_lower, my_camera.gain_upper)
 time.sleep(1)
 
-print("Changing Gain to 15...")
-my_camera.set_gain(15)
+print("Changing Gain to 5...")
+my_camera.set_gain(5)
 print(my_camera.gain)
 time.sleep(1)
 
@@ -22,15 +22,19 @@ print(my_camera.exposure)
 print(my_camera.exposure_lower, my_camera.exposure_upper)
 time.sleep(1)
 
-print("Changing Exposure to 20000...")
-my_camera.set_exposure(20000)
+print("Changing Exposure to 50000...")
+my_camera.set_exposure(50000)
 print(my_camera.exposure)
 time.sleep(1)
+
+print("Resetting exposure and gain...")
+my_camera.set_exposure(10000)
+my_camera.set_gain(0)
 
 
 print()
 
-my_stage = Stage("ThorLabs").initiate()
+my_stage = Stage("Lens").initiate()
 print("Stage Params")
 print("-----------------")
 
