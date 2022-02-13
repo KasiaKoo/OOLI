@@ -29,7 +29,7 @@ print(my_camera.exposure)
 time.sleep(1)
 
 print("Taking picture...")
-image = my_camera.frame_capture()
+image = my_camera.photo_capture()
 plt.imshow(image)
 
 

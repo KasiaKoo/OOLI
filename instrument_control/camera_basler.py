@@ -51,3 +51,10 @@ class Basler():
         grab_result = self.camera.RetrieveResult(100, pylon.TimeoutHandling_ThrowException,)
         img = grab_result.Array
         return img
+
+
+    def photo_capture(self):
+        self.camera.StartGrabbing()
+        photo = self.frame_capture()
+        self.camera.StopGrabbing()
+        return photo
