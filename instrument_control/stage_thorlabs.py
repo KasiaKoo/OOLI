@@ -32,10 +32,11 @@ class ThorLabsStage():
     def toggle_lock(self):
         is_in_motion = self.stage.is_in_motion
         while is_in_motion:
+            print("Waiting to lock...")
             time.sleep(0.5)
             is_in_motion = self.stage.is_in_motion
 
-        self.hold = self.hold * -1
+        self.hold = not self.hold
         print("Lock:", self.hold)
 
 
