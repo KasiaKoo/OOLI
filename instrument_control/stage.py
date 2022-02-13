@@ -1,4 +1,4 @@
-from stage_thorlabs import ThorLabsStage
+from instrument_control.stage_thorlabs import ThorLabsStage
 
 class Stage:
     """

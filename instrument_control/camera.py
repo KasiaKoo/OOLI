@@ -1,4 +1,4 @@
-from camera_basler import Basler
+from instrument_control.camera_basler import Basler
 
 class Camera:
     """
