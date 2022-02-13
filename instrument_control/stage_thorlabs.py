@@ -10,7 +10,6 @@ class ThorLabsStage():
         
         self.stage = apt.Motor(stage_number)
 
-        self.position = self.get_position()
         self.position_lower, self.position_upper = self.get_position_limits()
         self.hold = False
 
