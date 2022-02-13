@@ -4,13 +4,14 @@ class Basler():
     """
     Basler camera class
     """
-    def __init__(self):
+    def __init__(self, name):
 
         # open camera
         # TODO: generalise to multiple basler cameras
         self.camera = pylon.InstantCamera(pylon.TlFactory.GetInstance().CreateFirstDevice())
         self.camera.Open()
 
+        self.name = name
         self.exposure = self.get_exposure()
         self.gain = self.get_gain()
         self.gain_lower, self.gain_upper = self.get_gain_limits()
