@@ -31,6 +31,7 @@ time.sleep(1)
 print("Taking picture...")
 image = my_camera.photo_capture()
 plt.imshow(image)
+plt.show()
 
 
 
