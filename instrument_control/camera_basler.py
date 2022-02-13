@@ -1,6 +1,9 @@
 from pypylon import pylon
 
 class Basler():
+    """
+    Basler camera class
+    """
     def __init__(self):
 
         # open camera

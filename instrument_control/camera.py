@@ -1,11 +1,10 @@
-from basler import Basler
+from camera_basler import Basler
 
 class Camera:
+    """
+    Constructor class for camera control
+    """
     def __init__(self, name):
-        """__init__.
-
-        :param name:
-        """
 
         self.name = name
         self.model = self.get_model("assets/camera_list.json")
@@ -17,5 +16,6 @@ class Camera:
 
     def get_model(self, camera_list):
         # look up camera model in dictionary
+        # TODO: Fix
 
         return "Basler"
