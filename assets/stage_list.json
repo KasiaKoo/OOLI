@@ -32,14 +32,14 @@
 	},
 	"Sample Position": {
 		"Model": "SmarAct",
-		"Stage Number": 00000000,
+		"Stage Number": 0,
 		"Maximum": 10,
 		"Minimum": 0
 	},
 	"Rotation": {
 		"Model": "ThorLabs",
-		"Stage Number": 00000000,
+		"Stage Number": 0,
 		"Maximum": 10,
 		"Minimum": 0
-	},
+	}
 }
