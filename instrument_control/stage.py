@@ -1,4 +1,5 @@
 from instrument_control.stage_thorlabs import ThorLabsStage
+import json
 
 class Stage:
     """
@@ -16,7 +17,10 @@ class Stage:
             pass
 
     def get_model(self, stage_list):
-        # look up stage model in dictionary using self.name
-        # TODO: Fix
+        with open(stage_list) as f:
+            stage_dict = json.load(f)
 
-        return "ThorLabs", 83820741
+        model = stage_dict[self.name]["Model"]
+        stage_number = stage_dict[self.name]["Stage Number"]
+
+        return model, stage_number

@@ -1,4 +1,5 @@
 from instrument_control.camera_basler import Basler
+import json
 
 class Camera:
     """
@@ -15,7 +16,7 @@ class Camera:
             return Basler()
 
     def get_model(self, camera_list):
-        # look up camera model in dictionary using self.name
-        # TODO: Fix
+        with open(camera_list) as f:
+            camera_dict = json.load(f)
+        return camera_dict[self.name]["Model"]
 
-        return "Basler"

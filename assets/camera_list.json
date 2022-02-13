@@ -1,0 +1,10 @@
+{
+	"Solid HHG Detector": {
+		"Model": "Basler",
+		"Serial Number": 0000
+	},
+	"Beam Image": {
+		"Model": "Webcam",
+		"Serial Number": 0000
+	}
+}
