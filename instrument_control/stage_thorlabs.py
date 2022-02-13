@@ -11,7 +11,6 @@ class ThorLabsStage():
 
         self.position = self.get_position()
         self.position_lower, self.position_upper = self.get_position_limits()
-        self.moving = self.stage.is_in_motion
         self.hold = True
 
     def get_position(self):
@@ -24,7 +23,8 @@ class ThorLabsStage():
         return lower, upper
 
     def set_position(self, new_value):
-        self.stage.move_to(new_value, blocking=self.hold)
+        self.stage.move_to(new_value, blocking=False)
+
 
 
 

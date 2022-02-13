@@ -34,19 +34,15 @@ print("Stage Position")
 print(my_stage.position)
 print(my_stage.position_lower, my_stage.position_upper)
 
-print("Changing Stage Position to 2...")
-my_stage.hold = False
-my_stage.set_position(2)
-
-if my_stage.moving == False:
-    my_stage.hold = True
+print("Changing Stage Position to 5...")
+my_stage.set_position(5)
 
 print(my_stage.position)
-print(my_stage.hold)
 
+time.sleep(5)
 
-time.sleep(3)
-if my_stage.moving == False:
-    my_stage.hold = True
 print(my_stage.position)
-print(my_stage.hold)
+print("Changing Stage Position to 0...")
+my_stage.set_position(0)
+time.sleep(5)
+
