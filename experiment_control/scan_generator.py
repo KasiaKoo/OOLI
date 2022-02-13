@@ -40,7 +40,7 @@ class ScanGenerator:
     def output_config(self):
         stage_list_output = {}
         for key in list(self.stage_list.keys()):
-            stage_list_output[key.name] = self.stage_list[key]
+            stage_list_output[key.name] = self.stage_list[key].tolist()
         print(stage_list_output)
         with open(os.path.join(self.save_directory, "axis.json"), "w") as f:
             json.dump(stage_list_output, f, indent=4)
