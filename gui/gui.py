@@ -11,6 +11,7 @@ import os, sys, subprocess
 import imutils
 import numpy as np
 import matplotlib.pyplot as plt 
+import time
 
 class Camera_App:
 
@@ -416,8 +417,10 @@ class Detector_App:
 
         #Saving parameters
         self.save_dir = 'None'
-        self.save_post = False
-        self.save_raw = False
+        self.save_post = tk.BooleanVar()
+        self.save_post.set(False)
+        self.save_raw = tk.BooleanVar()
+        self.save_raw.set(True)
         self.save_dir=None
         
 
@@ -445,10 +448,10 @@ class Detector_App:
         self.reference_graph_height = 150
 
         # Initial bounds of graphs
-        self.horizontal_xmin = None
-        self.horizontal_xmax = None
-        self.vertical_xmin = None
-        self.vertical_xmax = None
+        self.horizontal_xmin = tk.IntVar()
+        self.horizontal_xmax = tk.IntVar()
+        self.vertical_xmin = tk.IntVar()
+        self.vertical_xmax = tk.IntVar()
         
 
         # Make GUI
@@ -575,6 +578,28 @@ class Detector_App:
         self.vmax_scale.grid(column=1, row=0)
         self.vmax_label = tk.Label(self.scale_canvas, text='Max Value')
         self.vmax_label.grid(column=1,row=1)
+        """
+        #add cropping
+        self.entry_x1 = tk.Entry(self.save_canvas, textvariable=self.horizontal_xmin)
+        self.entry_x1.grid(column=2, row=0)
+        self.entry_x1_label = tk.Label(self.scale_canvas, 'Horizontal Lower limit')
+        self.entry_x1_label.grid(column=2,row=1)
+
+        self.entry_x2 = tk.Entry(self.save_canvas, textvariable=self.horizontal_xmax)
+        self.entry_x2.grid(column=3, row=0)
+        self.entry_x2_label = tk.Label(self.scale_canvas, 'Horizontal Upper limit')
+        self.entry_x2_label.grid(column=3,row=1)
+
+        self.entry_y1 = tk.Entry(self.save_canvas, textvariable=self.vertical_xmin)
+        self.entry_y1.grid(column=4, row=0)
+        self.entry_y1_label = tk.Label(self.scale_canvas, 'Vertical Lower limit')
+        self.entry_y1_label.grid(column=4,row=1)
+        
+        self.entry_y2 = tk.Entry(self.save_canvas, textvariable=self.vertical_xmax)
+        self.entry_y2.grid(column=5, row=0)
+        self.entry_y2_label = tk.Label(self.scale_canvas, 'Vertical Upper limit')
+        self.entry_y2_label.grid(column=5,row=1)
+        """
 
         """___________Saving Options______________________________________"""
         # add snapshot button
@@ -625,8 +650,9 @@ class Detector_App:
             self.camera = PhotoCapture(host_ip=host_ip, port=port, cameratype=camera_type)
 
         self.gain_scale.configure(to = self.camera.gain_max, from_=self.camera.gain_min)
+        self.gain_scale.set(self.camera.gain)
         self.exposuretime_scale.configure(to = self.camera.exposuretime_max, from_=self.camera.exposuretime_min)
-
+        self.exposuretime_scale.set(self.camera.exptime)
 
 
     def disconnect_to_camera(self):
@@ -658,7 +684,10 @@ class Detector_App:
                                                                                        ("JPEG File", "*.jpg"),
                                                                                        ("All Files", "*.*")))
         if file:
-            # image.save(file)
+            if self.save_raw.get()==True:
+                self.image.save(file)
+            if self.save_post.get()==True:
+                plt.savefig(file.split('.')[0] + '_processed.'+ file.split('.')[1])
             print("Image saved!")
         else:
             print("Could not save image!")
@@ -675,7 +704,7 @@ class Detector_App:
             self.photo = PIL.Image.open(file)
             self.camera = PhotoLoader()
             self.camera_connected.set(False)
-            self.preview = self.camera.make_cropped_image(self.photo,cmap=self.chosen_filter.get(),dpi=self.monitor_dpi,resolution=(self.res_x,self.res_y), gamma = self.gamma.get(), vmax=self.vmax.get()) 
+            self.make_preview()
             self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
             self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
             print("Image {} opened!".format(file))
@@ -692,12 +721,22 @@ class Detector_App:
 
     def take_photo(self):
         # if self.camera_connected.get() == True:
+        x = time.time()
         try:
             self.photo = PIL.Image.fromarray(self.camera.get_photo())
+            print('after photo', time.time()-x)
+            x = time.time()
+            self.make_preview()
 
-            self.preview = self.camera.make_cropped_image(self.photo,cmap=self.chosen_filter.get(),dpi=self.monitor_dpi,resolution=(self.res_x,self.res_y), gamma = self.gamma.get(), vmax=self.vmax.get()) 
+            print('after postprocessing', time.time() - x)
+            x = time.time()
             self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
+            
+            print('after making widget', time.time() - x)
+            x = time.time()
             self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
+
+            print('after placing widget', time.time()-x)
         # else:
         except:
             print('No Connected Camera')
@@ -723,7 +762,7 @@ class Detector_App:
 
     def change_cmp(self,choice):
         if self.photo != None:
-            self.preview = self.camera.make_cropped_image(self.photo,cmap=self.chosen_filter.get(),dpi=self.monitor_dpi,resolution=(self.res_x,self.res_y), gamma = self.gamma.get(), vmax=self.vmax.get()) 
+            self.make_preview()
             self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
             self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
         else:
@@ -731,7 +770,7 @@ class Detector_App:
 
     def change_inter(self,choice):
         if self.photo != None:
-            self.preview = self.camera.make_cropped_image(self.photo,cmap=self.chosen_filter.get(),dpi=self.monitor_dpi,resolution=(self.res_x,self.res_y), gamma = self.gamma.get(), vmax=self.vmax.get()) 
+            self.make_preview()
             self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
             self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
         else: 
@@ -740,7 +779,7 @@ class Detector_App:
     def change_contrast(self,event):
         self.gamma.set(self.contrast_scale.get())
         if self.photo != None:
-            self.preview = self.camera.make_cropped_image(self.photo,cmap=self.chosen_filter.get(),dpi=self.monitor_dpi,resolution=(self.res_x,self.res_y), gamma = self.gamma.get(), vmax=self.vmax.get()) 
+            self.make_preview()
             self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
             self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
 
@@ -750,9 +789,24 @@ class Detector_App:
     def change_vmax(self,event):
         self.vmax.set(self.vmax_scale.get())
         if self.photo != None:
-            self.preview = self.camera.make_cropped_image(self.photo,cmap=self.chosen_filter.get(),dpi=self.monitor_dpi,resolution=(self.res_x,self.res_y), gamma = self.gamma.get(), vmax=self.vmax.get()) 
+            self.make_preview()
             self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
             self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
 
         else:
             print('No Picture to Edit')
+
+    def make_preview(self):
+        self.preview = self.camera.make_cropped_image(self.photo,cmap=self.chosen_filter.get(),dpi=self.monitor_dpi,resolution=(self.res_x,self.res_y), gamma = self.gamma.get(), vmax=self.vmax.get(), min_y=self.vertical_xmin.get(), max_y=self.vertical_xmax.get(), min_x=self.horizontal_xmin.get(), max_x=self.horizontal_xmax.get()) 
+
+
+    def change_lim(self):
+        if self.photo != None:
+            self.make_preview()
+            self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
+            self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
+
+        else:
+            print('No Picture to Edit')
+
+        

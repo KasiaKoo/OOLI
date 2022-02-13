@@ -80,7 +80,6 @@ class VideoCapture:
         if self.basler == True:
             grabResult = self.video.RetrieveResult(100, pylon.TimeoutHandling_ThrowException)
             img = grabResult.Array
-            print(img.shape)
             # original_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # not sure if this is necessary
             return img
             
@@ -251,6 +250,8 @@ class PhotoCapture:
         if host_ip=="None":
             self.connected_to_server = False
             self.camera = cv2.VideoCapture(0)
+            self.exptime = self.camera.get(cv2.CAP_PROP_EXPOSURE)
+            self.gain = self.camera.get(cv2.CAP_PROP_GAIN)
 
 
         elif host_ip=="Basler":
@@ -258,7 +259,10 @@ class PhotoCapture:
             self.basler = True
             self.camera = pylon.InstantCamera(pylon.TlFactory.GetInstance().CreateFirstDevice())    
             self.camera.Open() 
+            self.exptime = self.camera.ExposureTime.GetValue()
+            self.gain = self.camera.Gain.GetValue()
             self.camera.StartGrabbing()
+        
 
         # otherwise, connect to server
         else:
@@ -284,7 +288,9 @@ class PhotoCapture:
 
     def change_gain(self, gain_val):
         if self.basler == True:
-            self.camera.ExposureTime
+            print(self.camera.Gain.GetValue())
+            self.camera.Gain.SetValue(gain_val)
+            print(self.camera.Gain.GetValue())
         elif self.connected_to_server == False:
             print(self.camera.get(cv2.CAP_PROP_GAIN))
             self.camera.set(cv2.CAP_PROP_GAIN, gain_val)
@@ -309,7 +315,9 @@ class PhotoCapture:
 
     def change_exposure(self, exp_val):
         if self.basler == True:
-            print(' for basler not set yet')
+            print(self.camera.ExposureTime.GetValue())
+            self.camera.ExposureTime.SetValue(exp_val)
+            print(self.camera.ExposureTime.GetValue())
         elif self.connected_to_server == False:
             print(self.camera.get(cv2.CAP_PROP_EXPOSURE))
             self.camera.set(cv2.CAP_PROP_EXPOSURE, exp_val)
