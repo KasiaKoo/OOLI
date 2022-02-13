@@ -15,7 +15,7 @@ class Camera:
             return Basler()
 
     def get_model(self, camera_list):
-        # look up camera model in dictionary
+        # look up camera model in dictionary using self.name
         # TODO: Fix
 
         return "Basler"

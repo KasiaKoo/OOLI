@@ -6,6 +6,7 @@ print("Camera Params")
 print("-----------------")
 print(my_camera.gain)
 print(my_camera.exposure)
+print()
 
 my_stage = Stage("ThorLabs").initiate()
 print("Stage Params")
