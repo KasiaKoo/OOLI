@@ -12,7 +12,7 @@ class Stage:
 
     def initiate(self):
         if self.model == "ThorLabs":
-            stage = ThorLabsStage(self.stage_number, self.lower, self.upper)
+            stage = ThorLabsStage(self.name, self.stage_number)
 
         elif self.model == "SmarAct":
             pass

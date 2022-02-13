@@ -5,8 +5,9 @@ class ThorLabsStage():
     """
     Stages from ThorLabs class
     """
-    def __init__(self, stage_number, lower, upper):
+    def __init__(self, name, stage_number):
 
+        self.name = name
         
         self.stage = apt.Motor(stage_number)
 

@@ -13,7 +13,7 @@ class Camera:
 
     def initiate(self):
         if self.model == "Basler":
-            return Basler()
+            return Basler(self.name)
 
     def get_model(self, camera_list):
         with open(camera_list) as f:
