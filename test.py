@@ -1,6 +1,7 @@
 from instrument_control.camera import *
 from instrument_control.stage import *
 import time
+import matplotlib.pyplot as plt
 
 my_camera = Camera("Solid HHG Detector").initiate()
 
@@ -26,6 +27,12 @@ print("Changing Exposure to 50000...")
 my_camera.set_exposure(50000)
 print(my_camera.exposure)
 time.sleep(1)
+
+print("Taking picture...")
+image = my_camera.frame_capture()
+plt.imshow(image)
+
+
 
 print("Resetting exposure and gain...")
 my_camera.set_exposure(10000)
