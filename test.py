@@ -33,16 +33,25 @@ print("-----------------")
 print("Stage Position")
 print(my_stage.position)
 print(my_stage.position_lower, my_stage.position_upper)
+print(my_stage.hold)
 
 print("Changing Stage Position to 5...")
 my_stage.set_position(5)
 
 print(my_stage.position)
 
-time.sleep(5)
+my_stage.toggle_lock()
+print(my_stage.hold)
 
 print(my_stage.position)
+
 print("Changing Stage Position to 0...")
 my_stage.set_position(0)
+
+my_stage.toggle_lock()
+print("Changing Stage Position to 0...")
+my_stage.set_position(0)
+
 time.sleep(5)
+print(my_stage.position)
 
