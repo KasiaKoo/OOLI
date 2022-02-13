@@ -18,7 +18,7 @@ class ThorLabsStage():
         return self.stage.position
 
     def get_position_limits(self):
-        parameters = self.stage.get_stage_axis_info
+        parameters = self.stage.get_stage_axis_info()
         lower = parameters[0]
         upper = parameters[1]
         return lower, upper
