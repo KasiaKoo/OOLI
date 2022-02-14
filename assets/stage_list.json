@@ -20,8 +20,8 @@
 	"Iris": {
 		"Model": "ThorLabs",
 		"Stage Number": 27259277,
-		"Maximum": 10,
-		"Minimum": 0
+		"Maximum": 380,
+		"Minimum": 300
 	},
 	"Filter Wheel": {
 		"Model": "ThorLabs",
