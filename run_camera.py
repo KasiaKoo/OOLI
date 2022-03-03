@@ -25,7 +25,7 @@ y_eV = y_eV[eV_mask]
 ver = ver[ver_mask]
 I = Image()
 
-for i in range(2):
+for i in range(5):
     fig, ax = plt.subplots(2)
     img = camera.photo_capture()
     proc = Image.quick_image(img, bg, 1, eV_mask, ver_mask, vmin, vmax)
