@@ -1,0 +1,45 @@
+{
+	"Wedge": {
+		"Model": "ThorLabs",
+		"Stage Number": 83841538,
+		"Maximum": 25,
+		"Minimum": 0
+	},
+	"Lens": {
+		"Model": "ThorLabs",
+		"Stage Number": 83858594,
+		"Maximum": 45,
+		"Minimum": 0
+	},
+	"Pickoff": {
+		"Model": "ThorLabs",
+		"Stage Number": 83820741,
+		"Maximum": 25,
+		"Minimum": 0
+	},
+	"Iris": {
+		"Model": "ThorLabs",
+		"Stage Number": 27259277,
+		"Maximum": 380,
+		"Minimum": 300
+	},
+	"Filter Wheel": {
+		"Model": "ThorLabs",
+		"Stage Number": 83841586,
+		"Maximum": 360,
+		"Minimum": 0
+
+	},
+	"Sample Position": {
+		"Model": "SmarAct",
+		"Stage Number": 0,
+		"Maximum": 10,
+		"Minimum": 0
+	},
+	"Rotation": {
+		"Model": "ThorLabs",
+		"Stage Number": 0,
+		"Maximum": 10,
+		"Minimum": 0
+	}
+}

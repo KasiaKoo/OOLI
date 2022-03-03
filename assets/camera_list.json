@@ -1,15 +1,10 @@
 {
-    "Laptop Webcam": {
-	"host_ip": "None",
-	"port": "0",
-	"cam_type": "webcam",
-	"cam_num": "0"
-    },
-    
-    "Basler": {
-	"host_ip": "Basler",
-	"port": "0",
-	"cam_type": "basler",
-	"cam_num": "1"
-    }
+	"Solid HHG Detector": {
+		"Model": "Basler",
+		"Serial Number": 0
+	},
+	"Beam Image": {
+		"Model": "Webcam",
+		"Serial Number": 0
+	}
 }
