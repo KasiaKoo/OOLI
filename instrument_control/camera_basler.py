@@ -50,7 +50,7 @@ class Basler():
 
     def frame_capture(self):
         grab_result = self.camera.RetrieveResult(20000, pylon.TimeoutHandling_ThrowException)
-        img = grab_result.Array.asty
+        img = grab_result.Array.astype(int)
         return img
 
 
