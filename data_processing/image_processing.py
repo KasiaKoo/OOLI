@@ -51,7 +51,8 @@ class Image():
         return self
     
     def apply_mask(self, Hmask, Vmask):
-        self.image = self.image[Vmask, Hmask]
+        self.image = self.image[Vmask, :]
+        self.image = self.image[:,Hmask]
         self.Hmask = Hmask
         self.Vmask = Vmask
         return self
