@@ -16,7 +16,7 @@ class Image():
         self.image_raw = self.image
         return self
 
-    def load_bg_array(self, bg_array)
+    def load_bg_array(self, bg_array):
         self.bg = bg_array
         return self
 
