@@ -380,7 +380,7 @@ class Detector_App:
                 self.preview = np.uint8(cmap(img/vmax))*vmax
                 image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
                 self.preview_canvas.create_image(0, 0, image=image, anchor=tk.NW)
-                count = count += 1
+                count += 1
                 self.continous_num.set(str(count))
                 print('Updated pic')
                 continous_switch = self.feed_continous.get()
