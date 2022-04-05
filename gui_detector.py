@@ -362,13 +362,12 @@ class Detector_App:
         vmin = int(self.cl.get())
         vmax = int(self.ch.get())
         gamma = self.gamma.get()
-        global continous_switch 
-        continous_switch = self.feed_continous.get()
         Thread(target=self.fram_cap, args =(Hmask, Vmask, vmin, vmax, gamma, cmap))
 
             
     def fram_cap(self, Hmask, Vmask, vmin, vmax, gamma, cmap):
-        global continous_switch
+        print('enter fram cap')
+        continous_switch = self.feed_continous.get()
         while continous_switch==True:
             if self.camera_connected.get() == True:
                 self.raw_image = self.camera.photo_capture()
