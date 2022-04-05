@@ -197,7 +197,7 @@ class Detector_App:
         self.colourmap_dropdown_label.pack()
         self.chosen_filter = tk.StringVar()
         self.chosen_filter.set(filters[0])
-        self.filter_selector = tk.OptionMenu(self.drop_canvas, self.chosen_filter, *filters, command=self.change_cmp)
+        self.filter_selector = tk.OptionMenu(self.drop_canvas, self.chosen_filter, *filters)
         self.filter_selector.pack()
 
         # add processing scales
