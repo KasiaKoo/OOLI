@@ -320,7 +320,7 @@ class Detector_App:
         self.savedir_text.set('Saving to '+self.save_dir)
 
     def take_photo(self):
-        if self.camera_connected == True:
+        if self.camera_connected.get() == True:
             self.raw_image = self.camera.photo_capture()
             self.make_preview()
             self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
