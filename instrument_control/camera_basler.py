@@ -59,3 +59,6 @@ class Basler():
         photo = self.frame_capture()
         self.camera.StopGrabbing()
         return photo
+
+    def close(self):
+        self.camera.Close()

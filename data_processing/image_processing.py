@@ -60,10 +60,8 @@ class Image():
     def set_cmap(self, cmap):
         self.cmap = cmap
     
-    def quick_image(self, image_array, bg_array, gamma, Hmask, Vmask, vmin, vmax):
+    def quick_image(self, image_array, gamma, Hmask, Vmask, vmin, vmax):
         self.load_image(image_array)
-        self.load_bg_array(bg_array)
-        self.sub_bg()
         self.apply_mask(Hmask, Vmask)
         self.set_vlim(vmin,vmax)
         self.remove_dead_pix()
