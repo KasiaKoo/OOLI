@@ -41,7 +41,7 @@ class Detector_App:
         # Temporary placeholder photo array and preview array
         self.photo = None
         self.preview = None
-        self.raw_image = None
+        self.raw_image = np.random.rand(1000,1000)
         self.imgproc = Image()
 
         #Camera parameters
@@ -115,7 +115,7 @@ class Detector_App:
         self.snapshot.get_tk_widget().pack()
         bye = tk.Button(master=self.preview_canvas, text="Quit", command=self._quit)
         bye.pack(side=tk.BOTTOM)
-        self.im = self.ax.imshow(np.random.rand(1000,1000))
+        self.im = self.ax.imshow(self.raw_image)
         self.preview_canvas.grid(row=0, column=0, sticky=tk.N)
 
         """________UI Canvases___________________________"""
@@ -365,7 +365,7 @@ class Detector_App:
             print('No Connected Camera')
 
     def update(self):
-        if self.raw_image != None:
+        if type(self.raw_image) != 'NoneType':
             cmap = cm.get_cmap(self.chosen_filter.get())
             haxis = np.arange(self.raw_image.shape[1])
             vaxis = np.arange(self.raw_image.shape[0])
