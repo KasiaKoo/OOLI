@@ -140,7 +140,11 @@ class Detector_App:
 
         self.continous_checkbox = tk.Checkbutton(self.camera_canvas, text='Continous', variable = self.feed_continous,command=self.stream)
         self.continous_checkbox.pack()
-
+        self.continous_Label = tk.Label(self.camera_canvas, text='Picture Taken in Loop')
+        self.continous_Label.pack()
+        self.continous_num = tk.StringVar()
+        self.continous_num.set('Not set yet')
+        self.continous_check = tk.Label(self.camera_canvas, textvariable=self.continous_num)
 
         # add camera options
         self.exposuretime = tk.IntVar()
@@ -361,6 +365,7 @@ class Detector_App:
         vmin = int(self.cl.get())
         vmax = int(self.ch.get())
         gamma = self.gamma.get()
+        self.continous_num.set(str(0))
         _thread.start_new_thread(self.fram_cap, (Hmask, Vmask, vmin, vmax, gamma, cmap))
             
     def fram_cap(self, Hmask, Vmask, vmin, vmax, gamma, cmap):
@@ -373,6 +378,7 @@ class Detector_App:
                 self.preview = np.uint8(cmap(img/vmax))*vmax
                 image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
                 self.preview_canvas.create_image(0, 0, image=image, anchor=tk.NW)
+                self.continous_num.set(int(self.continous_num.get())+1)
                 print('Updated pic')
                 continous_switch = self.feed_continous.get()
 
