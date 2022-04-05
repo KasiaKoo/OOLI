@@ -372,14 +372,10 @@ class Detector_App:
     def update(self):
         if type(self.raw_image) != 'NoneType':
             cmap = cm.get_cmap(self.chosen_filter.get())
-            haxis = np.arange(self.raw_image.shape[1])
-            vaxis = np.arange(self.raw_image.shape[0])
-            Hmask = (haxis>int(self.hl.get()))*(haxis<int(self.hh.get()))
-            Vmask = (vaxis>int(self.vl.get()))*(vaxis<int(self.vh.get())) 
-            # self.img = self.imgproc.quick_image(self.raw_image, Hmask = Hmask, Vmask = Vmask, vmin=int(self.cl.get()), vmax=int(self.ch.get()), gamma = self.gamma.get())
-            self.ax.clear()
-            self.im = self.ax.imshow(self.img, cmap = cmap, aspect='auto',vmin=float(self.cl.get()), vmax=float(self.ch.get()))
-            self.fig.colorbar(self.im, ax =self.ax)
+            self.ax.set_cmap(cmap)
+            self.ax.set_clim(vmin = float(self.cl.get()), vmax = float(self.ch.get()))
+            self.ax.set_xlim(vmin = float(self.hl.get()), vmax = float(self.hh.get()))
+            self.ax.set_ylim(vmin = float(self.vl.get()), vmax = float(self.vh.get()))
             self.snapshot.draw()
         else:
             print('Take Picture')
