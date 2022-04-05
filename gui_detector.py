@@ -401,8 +401,9 @@ class Detector_App:
         count = int(self.continous_num.get())
         while continous_switch==True:
             if self.camera_connected.get() == True:
-                FuncAnimation(self.fig, self.take_photo, interval=5, blit=False)
-                self.snapshot.draw()
+                # FuncAnimation(self.fig, self.take_photo, interval=5, blit=False)
+                # self.snapshot.draw()
+                self.take_photo()
                 count += 1
                 self.continous_num.set(str(count))
                 continous_switch = self.feed_continous.get()
