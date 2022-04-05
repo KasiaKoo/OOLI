@@ -11,6 +11,7 @@ import imutils
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
+import time
 import _thread
 
 class Detector_App:
@@ -373,6 +374,7 @@ class Detector_App:
         print('enter fram cap')
         continous_switch = self.feed_continous.get()
         count = int(self.continous_num.get())
+        x=time.time()
         while continous_switch==True:
             if self.camera_connected.get() == True:
                 self.raw_image = self.camera.photo_capture()
@@ -382,7 +384,7 @@ class Detector_App:
                 self.preview_canvas.create_image(0, 0, image=image, anchor=tk.NW)
                 count += 1
                 self.continous_num.set(str(count))
-                print('Updated pic')
+                print('Updated pic', x-time.time())
                 continous_switch = self.feed_continous.get()
 
     def change_cam_exposure(self,event):
