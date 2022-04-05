@@ -113,6 +113,9 @@ class Detector_App:
         self.fig, self.ax = plt.subplots(1)
         self.snapshot = FigureCanvasTkAgg(self.fig, self.preview_canvas)
         self.snapshot.get_tk_widget().pack()
+        button = tk.Button(master=self.preview_canvas, text="Quit", command=self._quit)
+        button.pack(side=tk.BOTTOM)
+
         self.im = self.ax.imshow(np.random.rand(1000,1000))
         self.preview_canvas.grid(row=0, column=0, sticky=tk.N)
 
@@ -275,6 +278,11 @@ class Detector_App:
     # APP FUNCTIONS
     # --------------------------------------------------------------------------
 
+
+    def _quit(self):
+        self.window.quit()     # stops mainloop
+        self.window.destroy()  # this is necessary on Windows to prevent
+                        # Fatal Python Error: PyEval_RestoreThread: NULL tstate
 
     def connect_to_camera(self):
         """Sets video class to connect to chosen camera from drop-down menu"""
