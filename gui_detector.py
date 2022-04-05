@@ -14,6 +14,7 @@ from matplotlib import cm
 import time
 import keyboard
 from threading import Thread
+import _thread
 
 class Detector_App:
 
@@ -363,7 +364,7 @@ class Detector_App:
         vmax = int(self.ch.get())
         gamma = self.gamma.get()
         print('before Thread')
-        Thread(target=self.fram_cap, args =(Hmask, Vmask, vmin, vmax, gamma, cmap))
+        _thread.start_new_thread(self.fram_cap, (Hmask, Vmask, vmin, vmax, gamma, cmap))
         print('after thread')
             
     def fram_cap(self, Hmask, Vmask, vmin, vmax, gamma, cmap):
