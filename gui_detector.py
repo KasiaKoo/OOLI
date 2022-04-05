@@ -351,7 +351,7 @@ class Detector_App:
             self.ax.clear()
             self.im = self.ax.imshow(self.img)
             self.snapshot.draw()
-            self.ax.clear()
+            plt.close()
         else:
             print('No Connected Camera')
 
