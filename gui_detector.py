@@ -259,7 +259,7 @@ class Detector_App:
     def connect_to_camera(self):
         """Sets video class to connect to chosen camera from drop-down menu"""
 
-        self.camera = Camera(self.chosen_camera).initiate()
+        self.camera = Camera(self.chosen_camera.get()).initiate()
         new_gain = self.camera.get_gain()
         gl, gh = self.camera.get_gain_limits()
         new_expT = self.camera.get_exposure()
