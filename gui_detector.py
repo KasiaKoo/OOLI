@@ -338,13 +338,12 @@ class Detector_App:
         cmap = cm.get_cmap(self.chosen_filter.get())
         im_max = max(self.raw_image.flatten())
         im_arr = self.raw_image/im_max
-        colored_im = np.uint8(cmap(im_arr))*im_max
         haxis = np.arange(self.raw_image.shape[1])
         vaxis = np.arange(self.raw_image.shape[0])
         Hmask = (haxis<int(self.hl.get()))*(haxis>int(self.hh.get()))
         Vmask = (vaxis<int(self.vl.get()))*(vaxis>int(self.vh.get())) 
-        self.preview = self.imgproc.quick_image(colored_im, Hmask = Hmask, Vmask = Vmask, vmin=int(self.cl.get()), vmax=int(self.ch.get()), gamma = self.gamma.get())    
-        
+        img = self.imgproc.quick_image(self.raw_image, Hmask = Hmask, Vmask = Vmask, vmin=int(self.cl.get()), vmax=int(self.ch.get()), gamma = self.gamma.get())
+        self.preview = np.uint8(cmap(img/int(self.ch.get())))*int(self.ch.get())        
     def check_camera(self):
         if self.camera_connected.get() == True:
             print('It is true')
