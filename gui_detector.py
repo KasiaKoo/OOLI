@@ -362,6 +362,7 @@ class Detector_App:
             self.ax.clear()
             # self.im = self.ax.imshow(self.img, cmap = cmap, aspect='auto')
             self.im.set_data(self.img)
+            self.fig.canvas.flush_events()
             self.snapshot.draw()
         else:
             print('No Connected Camera')
