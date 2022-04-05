@@ -341,7 +341,7 @@ class Detector_App:
             Hmask = (haxis>int(self.hl.get()))*(haxis<int(self.hh.get()))
             Vmask = (vaxis>int(self.vl.get()))*(vaxis<int(self.vh.get())) 
             self.img = self.imgproc.quick_image(self.raw_image, Hmask = Hmask, Vmask = Vmask, vmin=int(self.cl.get()), vmax=int(self.ch.get()), gamma = self.gamma.get())
-            self.preview = self.img# np.uint8(cmap(self.img/int(self.ch.get())))*int(self.ch.get())
+            self.preview = 255*(self.img/max(self.img.flatten())).astype('uint8')# np.uint8(cmap(self.img/int(self.ch.get())))*int(self.ch.get())
             self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
             self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
         else:
