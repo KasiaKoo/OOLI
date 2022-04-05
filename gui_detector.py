@@ -112,7 +112,7 @@ class Detector_App:
         fig, self.ax = plt.subplots(1)
         self.bar = FigureCanvasTkAgg(fig, self.preview_canvas)
         self.bar.get_tk_widget().pack()
-        self.bar.show()
+        self.bar.draw()
         """________UI Canvases___________________________"""
         # add a canvas in which all the buttons will sit
         self.camera_canvas = tk.Frame(self.window)
