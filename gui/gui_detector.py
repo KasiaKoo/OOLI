@@ -1,3 +1,5 @@
+# import sys
+# sys.path.append('../')
 from instrument_control.camera import Camera
 from data_processing.image_processing import Image
 import tkinter as tk

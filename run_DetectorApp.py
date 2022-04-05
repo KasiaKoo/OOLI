@@ -1,4 +1,4 @@
-from gui_detector import Detector_App
+from gui.gui_detector import Detector_App
 
 
 if __name__ == "__main__":
