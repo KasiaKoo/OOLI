@@ -9,7 +9,8 @@ import json
 import os, sys, subprocess
 import imutils
 import numpy as np
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
+from matplotlib import cm
 import time
 
 class Detector_App:
@@ -183,14 +184,6 @@ class Detector_App:
         self.filter_selector = tk.OptionMenu(self.drop_canvas, self.chosen_filter, *filters, command=self.change_cmp)
         self.filter_selector.pack()
 
-        # add dropdown menu for interpolation
-        self.inter_dropdown_label = tk.Label(self.drop_canvas, text="Interpolation Map")
-        self.inter_dropdown_label.pack()
-        self.chosen_inter = tk.StringVar()
-        self.chosen_inter.set(inter[0])
-        self.inter_selector = tk.OptionMenu(self.drop_canvas, self.chosen_inter, *inter, command=self.change_inter)
-        self.inter_selector.pack()
-
         # add processing scales
 
         #add scale for contrast
@@ -336,12 +329,16 @@ class Detector_App:
             print('No Connected Camera')
 
     def make_preview(self):
+        cmap = cm.get_cmap(self.chosen_filter)
+        im_max = max(self.raw_image.flatten())
+        im_arr = self.raw_image/im_max
+        colored_im = np.uint8(cmap(im_arr))*im_max
         haxis = np.arange(self.raw_image.shape[1])
         vaxis = np.arange(self.raw_image.shape[0])
         Hmask = (haxis<int(self.hl.get()))*(haxis>int(self.hh.get()))
         Vmask = (vaxis<int(self.vl.get()))*(vaxis>int(self.vh.get())) 
-        self.preview = self.imgproc.quick_image(self.raw_image, Hmask = Hmask, Vmask = Vmask, vmin=int(self.cl.get()), vmax=int(self.ch.get()), gamma = self.gamma.get())    
- 
+        self.preview = self.imgproc.quick_image(colored_im, Hmask = Hmask, Vmask = Vmask, vmin=int(self.cl.get()), vmax=int(self.ch.get()), gamma = self.gamma.get())    
+        
     def check_camera(self):
         if self.camera_connected.get() == True:
             self.connect_to_camera()
@@ -375,13 +372,6 @@ class Detector_App:
         else:
             print('No Picture to Edit')
 
-    def change_inter(self,choice):
-        if self.photo != None:
-            self.make_preview()
-            self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
-            self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
-        else: 
-            print('No Picture to Edit')
 
     def change_contrast(self,event):
         self.gamma.set(self.contrast_scale.get())
