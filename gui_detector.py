@@ -362,8 +362,9 @@ class Detector_App:
         vmin = int(self.cl.get())
         vmax = int(self.ch.get())
         gamma = self.gamma.get()
+        print('before Thread')
         Thread(target=self.fram_cap, args =(Hmask, Vmask, vmin, vmax, gamma, cmap))
-
+        print('after thread')
             
     def fram_cap(self, Hmask, Vmask, vmin, vmax, gamma, cmap):
         print('enter fram cap')
