@@ -10,6 +10,7 @@ import os, sys, subprocess
 import imutils
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib import cm
 import time
 import _thread
@@ -105,9 +106,13 @@ class Detector_App:
         self.window.geometry(str(self.xres)+"x"+str(self.yres))
 
         # add a canvas in which image feed and graphs will sit
-        self.preview_canvas = tk.Canvas(self.window, width=self.res_x+20, height=self.res_y+10)
+        # self.preview_canvas = tk.Canvas(self.window, width=self.res_x+20, height=self.res_y+10)
+        self.preview_canvas = tk.Frame(self.window)
         self.preview_canvas.grid(row=0, column=0, sticky=tk.N)
-
+        fig, self.ax = plt.subplot()
+        self.bar = FigureCanvasTkAgg(fig, self.preview_canvas)
+        self.bar.get_tk_widget().pack()
+        self.bar.show()
         """________UI Canvases___________________________"""
         # add a canvas in which all the buttons will sit
         self.camera_canvas = tk.Frame(self.window)
@@ -334,20 +339,21 @@ class Detector_App:
     def take_photo(self):
         if self.camera_connected.get() == True:
             self.raw_image = self.camera.photo_capture()
-            self.make_preview()
-            self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
-            self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
+            cmap = cm.get_cmap(self.chosen_filter.get())
+            haxis = np.arange(self.raw_image.shape[1])
+            vaxis = np.arange(self.raw_image.shape[0])
+            Hmask = (haxis>int(self.hl.get()))*(haxis<int(self.hh.get()))
+            Vmask = (vaxis>int(self.vl.get()))*(vaxis<int(self.vh.get())) 
+            self.img = self.imgproc.quick_image(self.raw_image, Hmask = Hmask, Vmask = Vmask, vmin=int(self.cl.get()), vmax=int(self.ch.get()), gamma = self.gamma.get())
+            self.ax.imshow(self.img, cmap=cmap)
+            self.bar.draw()
+            self.ax.clear()
+            # self.preview = np.uint8(cmap(self.img/int(self.ch.get())))*int(self.ch.get())
+            # self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
+            # self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
         else:
             print('No Connected Camera')
 
-    def make_preview(self):
-        cmap = cm.get_cmap(self.chosen_filter.get())
-        haxis = np.arange(self.raw_image.shape[1])
-        vaxis = np.arange(self.raw_image.shape[0])
-        Hmask = (haxis>int(self.hl.get()))*(haxis<int(self.hh.get()))
-        Vmask = (vaxis>int(self.vl.get()))*(vaxis<int(self.vh.get())) 
-        self.img = self.imgproc.quick_image(self.raw_image, Hmask = Hmask, Vmask = Vmask, vmin=int(self.cl.get()), vmax=int(self.ch.get()), gamma = self.gamma.get())
-        self.preview = np.uint8(cmap(self.img/int(self.ch.get())))*int(self.ch.get())
  
     def check_camera(self):
         if self.camera_connected.get() == True:
@@ -383,8 +389,7 @@ class Detector_App:
                 image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
                 self.preview_canvas.create_image(0, 0, image=image, anchor=tk.NW)
                 count += 1
-                # self.continous_num.set(str(count))
-                print('Updated pic', x-time.time())
+                self.continous_num.set(str(count))
                 continous_switch = self.feed_continous.get()
 
     def change_cam_exposure(self,event):
@@ -400,8 +405,8 @@ class Detector_App:
         else:
             print('No camera connected')
 
-    ########################################################### 
-    def change_cmp(self,choice):
+    ########################################################### Processing Function ################# 
+    def change_cmp(self):
         cmap = cm.get_cmap(self.chosen_filter.get())
         self.preview = np.uint8(cmap(self.img/int(self.ch.get())))*int(self.ch.get())
         image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
