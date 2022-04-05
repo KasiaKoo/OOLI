@@ -107,6 +107,8 @@ class Detector_App:
 
         # add a canvas in which image feed and graphs will sit
         self.preview_canvas = tk.Canvas(self.window, width=self.res_x+20, height=self.res_y+10)
+        self.preview_canvas.grid(row=0, column=0, sticky=tk.N)
+
         """________UI Canvases___________________________"""
         # add a canvas in which all the buttons will sit
         self.camera_canvas = tk.Frame(self.window)
