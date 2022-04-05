@@ -146,9 +146,8 @@ class Detector_App:
         self.camera_checkbox.pack()
 
         # add take picture button
-        self.take_photo_button = tk.Button(self.camera_canvas, text='Take Picture', command=self.take_photo)
+        self.take_photo_button = tk.Button(self.camera_canvas, text='Take Picture', command=lambda: _thread.start_new_thread(self.take_photo, ()))       
         self.take_photo_button.pack()
-
         # add button to open camera list json file
 
         self.continous_checkbox = tk.Checkbutton(self.camera_canvas, text='Continous', variable = self.feed_continous,command=self.stream)
