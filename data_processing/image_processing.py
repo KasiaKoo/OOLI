@@ -46,8 +46,10 @@ class Image():
 
     def improve_contrast(self, gamma):
         self.gamma = gamma
-        max_pix = max(self.image.flatten())
-        self.image = ((self.image/max_pix)**self.gamma)*max_pix
+        max_pix = max(abs(self.image.flatten()))
+        if max_pix != 0:
+            self.image = ((self.image/max_pix)**self.gamma)*max_pix
+
         return self
     
     def apply_mask(self, Hmask, Vmask):
