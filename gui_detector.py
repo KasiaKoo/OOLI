@@ -367,6 +367,7 @@ class Detector_App:
             else:
                 self.raw_image = self.camera.photo_capture()
                 self.im.set_data(self.raw_image)
+                self.snapshot.draw()
         else:
             print('No Connected Camera')
 
