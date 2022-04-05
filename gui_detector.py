@@ -10,6 +10,7 @@ import os, sys, subprocess
 import imutils
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib import cm
 import time
@@ -112,7 +113,7 @@ class Detector_App:
         self.fig, self.ax = plt.subplots(1)
         self.snapshot = FigureCanvasTkAgg(self.fig, self.preview_canvas)
         self.snapshot.get_tk_widget().pack()
-        self.im = self.ax.imshow(np.zeros([10,10]))
+        self.im = self.ax.imshow(np.random.rand(1000,1000))
         self.preview_canvas.grid(row=0, column=0, sticky=tk.N)
 
         """________UI Canvases___________________________"""
@@ -350,6 +351,7 @@ class Detector_App:
             self.ax.clear()
             self.im = self.ax.imshow(self.img)
             self.snapshot.draw()
+            self.ax.clear()
         else:
             print('No Connected Camera')
 
