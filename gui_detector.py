@@ -212,10 +212,10 @@ class Detector_App:
         self.hor_lim_label = tk.Label(self.drop_canvas, text="Horizontal Scale Limits")
         self.hl = tk.StringVar()
         self.hl.set('0')
-        self.hor_low = tk.Entry(self.drop_canvas, textvariable=self.cl)
+        self.hor_low = tk.Entry(self.drop_canvas, textvariable=self.hl)
         self.hh = tk.StringVar()
         self.hh.set('5000')
-        self.hor_high = tk.Entry(self.drop_canvas, textvariable=self.ch)
+        self.hor_high = tk.Entry(self.drop_canvas, textvariable=self.hh)
         self.hor_lim_label.pack()
         self.hor_low.pack()
         self.hor_high.pack()
@@ -224,10 +224,10 @@ class Detector_App:
         self.ver_lim_label = tk.Label(self.drop_canvas, text="Vertical Scale Limits")
         self.vl = tk.StringVar()
         self.vl.set('0')
-        self.ver_low = tk.Entry(self.drop_canvas, textvariable=self.cl)
+        self.ver_low = tk.Entry(self.drop_canvas, textvariable=self.vl)
         self.vh = tk.StringVar()
         self.vh.set('5000')
-        self.ver_high = tk.Entry(self.drop_canvas, textvariable=self.ch)
+        self.ver_high = tk.Entry(self.drop_canvas, textvariable=self.vh)
         self.ver_lim_label.pack()
         self.ver_low.pack()
         self.ver_high.pack()
@@ -341,7 +341,8 @@ class Detector_App:
         Hmask = (haxis>int(self.hl.get()))*(haxis<int(self.hh.get()))
         Vmask = (vaxis>int(self.vl.get()))*(vaxis<int(self.vh.get())) 
         img = self.imgproc.quick_image(self.raw_image, Hmask = Hmask, Vmask = Vmask, vmin=int(self.cl.get()), vmax=int(self.ch.get()), gamma = self.gamma.get())
-        self.preview = np.uint8(cmap(img/int(self.ch.get())))*int(self.ch.get())        
+        self.preview = np.uint8(cmap(img/int(self.ch.get())))*int(self.ch.get())
+ 
     def check_camera(self):
         if self.camera_connected.get() == True:
             print('It is true')
@@ -351,8 +352,21 @@ class Detector_App:
             self.disconnect_to_camera()
 
     def stream(self):
+        cmap = cm.get_cmap(self.chosen_filter.get())
+        haxis = np.arange(self.raw_image.shape[1])
+        vaxis = np.arange(self.raw_image.shape[0])
+        Hmask = (haxis>int(self.hl.get()))*(haxis<int(self.hh.get()))
+        Vmask = (vaxis>int(self.vl.get()))*(vaxis<int(self.vh.get()))
+        vmin = int(self.cl.get())
+        vmax = int(self.ch.get())
+        gamma = self.gamma.get()
         while self.feed_continous.get()==True:
-            self.take_photo()
+            if self.camera_connected.get() == True:
+                self.raw_image = self.camera.photo_capture()
+                img = self.imgproc.quick_image(self.raw_image, Hmask = Hmask, Vmask = Vmask, vmin=vmin, vmax=vmax, gamma = gamma)
+                self.preview = np.uint8(cmap(img/vmax))*vmax
+                image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
+                self.preview_canvas.create_image(0, 0, image=image, anchor=tk.NW)
             
 
     def change_cam_exposure(self,event):
