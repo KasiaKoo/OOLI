@@ -336,12 +336,10 @@ class Detector_App:
 
     def make_preview(self):
         cmap = cm.get_cmap(self.chosen_filter.get())
-        im_max = max(self.raw_image.flatten())
-        im_arr = self.raw_image/im_max
         haxis = np.arange(self.raw_image.shape[1])
         vaxis = np.arange(self.raw_image.shape[0])
-        Hmask = (haxis<int(self.hl.get()))*(haxis>int(self.hh.get()))
-        Vmask = (vaxis<int(self.vl.get()))*(vaxis>int(self.vh.get())) 
+        Hmask = (haxis>int(self.hl.get()))*(haxis<int(self.hh.get()))
+        Vmask = (vaxis>int(self.vl.get()))*(vaxis<int(self.vh.get())) 
         img = self.imgproc.quick_image(self.raw_image, Hmask = Hmask, Vmask = Vmask, vmin=int(self.cl.get()), vmax=int(self.ch.get()), gamma = self.gamma.get())
         self.preview = np.uint8(cmap(img/int(self.ch.get())))*int(self.ch.get())        
     def check_camera(self):

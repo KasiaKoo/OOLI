@@ -64,8 +64,11 @@ class Image():
         self.load_image(image_array)
         self.apply_mask(Hmask, Vmask)
         self.set_vlim(vmin,vmax)
-        self.remove_dead_pix()
-        self.improve_contrast(gamma)
+        try:
+            self.remove_dead_pix()
+            self.improve_contrast(gamma)
+        except:
+            print('Not managed to be extra')
         return self.image
 
 
