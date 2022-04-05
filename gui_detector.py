@@ -199,8 +199,10 @@ class Detector_App:
         #add color limits
         self.color_lim_label = tk.Label(self.drop_canvas, text="Color Scale Limits")
         self.cl = tk.StringVar()
+        self.cl.set('0')
         self.color_low = tk.Entry(self.drop_canvas, textvariable=self.cl)
         self.ch = tk.StringVar()
+        self.ch.set('255')
         self.color_high = tk.Entry(self.drop_canvas, textvariable=self.ch)
         self.color_lim_label.pack()
         self.color_low.pack()
@@ -209,8 +211,10 @@ class Detector_App:
         #add Hmask limits
         self.hor_lim_label = tk.Label(self.drop_canvas, text="Horizontal Scale Limits")
         self.hl = tk.StringVar()
+        self.hl.set('0')
         self.hor_low = tk.Entry(self.drop_canvas, textvariable=self.cl)
         self.hh = tk.StringVar()
+        self.hh.set('5000')
         self.hor_high = tk.Entry(self.drop_canvas, textvariable=self.ch)
         self.hor_lim_label.pack()
         self.hor_low.pack()
@@ -219,8 +223,10 @@ class Detector_App:
         #add color limits
         self.ver_lim_label = tk.Label(self.drop_canvas, text="Vertical Scale Limits")
         self.vl = tk.StringVar()
+        self.vl.set('0')
         self.ver_low = tk.Entry(self.drop_canvas, textvariable=self.cl)
         self.vh = tk.StringVar()
+        self.vh.set('5000')
         self.ver_high = tk.Entry(self.drop_canvas, textvariable=self.ch)
         self.ver_lim_label.pack()
         self.ver_low.pack()
