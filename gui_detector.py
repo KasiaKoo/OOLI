@@ -372,6 +372,7 @@ class Detector_App:
     def fram_cap(self, Hmask, Vmask, vmin, vmax, gamma, cmap):
         print('enter fram cap')
         continous_switch = self.feed_continous.get()
+        count = int(self.continous_num.get())
         while continous_switch==True:
             if self.camera_connected.get() == True:
                 self.raw_image = self.camera.photo_capture()
@@ -379,7 +380,8 @@ class Detector_App:
                 self.preview = np.uint8(cmap(img/vmax))*vmax
                 image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
                 self.preview_canvas.create_image(0, 0, image=image, anchor=tk.NW)
-                self.continous_num.set(int(self.continous_num.get())+1)
+                count = count += 1
+                self.continous_num.set(str(count))
                 print('Updated pic')
                 continous_switch = self.feed_continous.get()
 
