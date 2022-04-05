@@ -329,7 +329,7 @@ class Detector_App:
             print('No Connected Camera')
 
     def make_preview(self):
-        cmap = cm.get_cmap(self.chosen_filter)
+        cmap = cm.get_cmap(self.chosen_filter.get())
         im_max = max(self.raw_image.flatten())
         im_arr = self.raw_image/im_max
         colored_im = np.uint8(cmap(im_arr))*im_max
