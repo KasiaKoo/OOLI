@@ -383,7 +383,7 @@ class Detector_App:
                 image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
                 self.preview_canvas.create_image(0, 0, image=image, anchor=tk.NW)
                 count += 1
-                self.continous_num.set(str(count))
+                # self.continous_num.set(str(count))
                 print('Updated pic', x-time.time())
                 continous_switch = self.feed_continous.get()
 
