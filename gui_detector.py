@@ -116,6 +116,7 @@ class Detector_App:
         bye = tk.Button(master=self.preview_canvas, text="Quit", command=self._quit, bg='red')
         bye.pack(side=tk.BOTTOM)
         self.im = self.ax.imshow(self.raw_image)
+        self.fig.colorbar(self.im, ax =self.ax)
         self.preview_canvas.grid(row=0, column=0, sticky=tk.N)
 
         """________UI Canvases___________________________"""
