@@ -341,8 +341,10 @@ class Detector_App:
         
     def check_camera(self):
         if self.camera_connected.get() == True:
+            print('It is true')
             self.connect_to_camera()
         if self.camera_connected.get() == False:
+            print('It is false')
             self.disconnect_to_camera()
 
     def stream(self):
