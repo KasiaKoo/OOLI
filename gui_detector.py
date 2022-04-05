@@ -109,7 +109,7 @@ class Detector_App:
         # self.preview_canvas = tk.Canvas(self.window, width=self.res_x+20, height=self.res_y+10)
         self.preview_canvas = tk.Frame(self.window)
         self.preview_canvas.grid(row=0, column=0, sticky=tk.N)
-        fig, self.ax = plt.subplot()
+        fig, self.ax = plt.subplots(1)
         self.bar = FigureCanvasTkAgg(fig, self.preview_canvas)
         self.bar.get_tk_widget().pack()
         self.bar.show()
