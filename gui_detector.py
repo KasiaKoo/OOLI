@@ -11,9 +11,6 @@ import imutils
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
-import time
-import keyboard
-from threading import Thread
 import _thread
 
 class Detector_App:
@@ -343,8 +340,8 @@ class Detector_App:
         vaxis = np.arange(self.raw_image.shape[0])
         Hmask = (haxis>int(self.hl.get()))*(haxis<int(self.hh.get()))
         Vmask = (vaxis>int(self.vl.get()))*(vaxis<int(self.vh.get())) 
-        img = self.imgproc.quick_image(self.raw_image, Hmask = Hmask, Vmask = Vmask, vmin=int(self.cl.get()), vmax=int(self.ch.get()), gamma = self.gamma.get())
-        self.preview = np.uint8(cmap(img/int(self.ch.get())))*int(self.ch.get())
+        self.img = self.imgproc.quick_image(self.raw_image, Hmask = Hmask, Vmask = Vmask, vmin=int(self.cl.get()), vmax=int(self.ch.get()), gamma = self.gamma.get())
+        self.preview = np.uint8(cmap(self.img/int(self.ch.get())))*int(self.ch.get())
  
     def check_camera(self):
         if self.camera_connected.get() == True:
@@ -355,6 +352,7 @@ class Detector_App:
             self.disconnect_to_camera()
 
     def stream(self):
+        #TODO: See if you can move it into while loop
         cmap = cm.get_cmap(self.chosen_filter.get())
         haxis = np.arange(self.raw_image.shape[1])
         vaxis = np.arange(self.raw_image.shape[0])
@@ -363,9 +361,7 @@ class Detector_App:
         vmin = int(self.cl.get())
         vmax = int(self.ch.get())
         gamma = self.gamma.get()
-        print('before Thread')
         _thread.start_new_thread(self.fram_cap, (Hmask, Vmask, vmin, vmax, gamma, cmap))
-        print('after thread')
             
     def fram_cap(self, Hmask, Vmask, vmin, vmax, gamma, cmap):
         print('enter fram cap')
@@ -395,16 +391,16 @@ class Detector_App:
 
     ########################################################### 
     def change_cmp(self,choice):
-        if self.photo != None:
-            self.make_preview()
-            self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
-            self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
-        else:
-            print('No Picture to Edit')
-
+        cmap = cm.get_cmap(self.chosen_filter.get())
+        self.preview = np.uint8(cmap(self.img/int(self.ch.get())))*int(self.ch.get())
+        image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
+        self.preview_canvas.create_image(0, 0, image=image, anchor=tk.NW)
 
     def change_contrast(self,event):
+        #TODO: fix gamma 
         self.gamma.set(self.contrast_scale.get())
+        gamma = self.gamma.get()
+        img = self.imgproc.quick_image(self.raw_image, Hmask = Hmask, Vmask = Vmask, vmin=vmin, vmax=vmax, gamma = gamma)
         if self.photo != None:
             self.make_preview()
             self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
