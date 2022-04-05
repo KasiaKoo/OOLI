@@ -12,6 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
 import time
+import keyboard
 
 class Detector_App:
 
@@ -360,17 +361,16 @@ class Detector_App:
         vmin = int(self.cl.get())
         vmax = int(self.ch.get())
         gamma = self.gamma.get()
-        try:
-            while self.feed_continous.get()==True:
-                if self.camera_connected.get() == True:
-                    self.raw_image = self.camera.photo_capture()
-                    img = self.imgproc.quick_image(self.raw_image, Hmask = Hmask, Vmask = Vmask, vmin=vmin, vmax=vmax, gamma = gamma)
-                    self.preview = np.uint8(cmap(img/vmax))*vmax
-                    image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
-                    self.preview_canvas.create_image(0, 0, image=image, anchor=tk.NW)
-                    print('Updated pic')
-        except KeyboardInterrupt:
-            pass
+        while self.feed_continous.get()==True:
+            if keyboard.is_pressed('q'):
+                break
+            elif self.camera_connected.get() == True:
+                self.raw_image = self.camera.photo_capture()
+                img = self.imgproc.quick_image(self.raw_image, Hmask = Hmask, Vmask = Vmask, vmin=vmin, vmax=vmax, gamma = gamma)
+                self.preview = np.uint8(cmap(img/vmax))*vmax
+                image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
+                self.preview_canvas.create_image(0, 0, image=image, anchor=tk.NW)
+                print('Updated pic')
             
 
     def change_cam_exposure(self,event):
