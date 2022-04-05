@@ -392,7 +392,7 @@ class Detector_App:
     def stream(self):
         self.update()
         self.continous_num.set(str(0))
-        _thread.start_new_thread(self.fram_cap)
+        _thread.start_new_thread(self.fram_cap, ())
             
     def fram_cap(self):
         print('enter fram cap')
