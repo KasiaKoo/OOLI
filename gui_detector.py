@@ -374,8 +374,8 @@ class Detector_App:
             cmap = cm.get_cmap(self.chosen_filter.get())
             self.im.set_cmap(cmap)
             self.im.set_clim(vmin = float(self.cl.get()), vmax = float(self.ch.get()))
-            self.ax.set_xlim(vmin = float(self.hl.get()), vmax = float(self.hh.get()))
-            self.ax.set_ylim(vmin = float(self.vl.get()), vmax = float(self.vh.get()))
+            self.ax.set_xlim(float(self.hl.get()), float(self.hh.get()))
+            self.ax.set_ylim(float(self.vl.get()), float(self.vh.get()))
             self.snapshot.draw()
         else:
             print('Take Picture')
