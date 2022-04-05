@@ -12,6 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.animation import FuncAnimation
 from matplotlib import cm
 import time
 import _thread
@@ -389,30 +390,18 @@ class Detector_App:
             self.disconnect_to_camera()
 
     def stream(self):
-        #TODO: See if you can move it into while loop
-        cmap = cm.get_cmap(self.chosen_filter.get())
-        haxis = np.arange(self.raw_image.shape[1])
-        vaxis = np.arange(self.raw_image.shape[0])
-        Hmask = (haxis>int(self.hl.get()))*(haxis<int(self.hh.get()))
-        Vmask = (vaxis>int(self.vl.get()))*(vaxis<int(self.vh.get()))
-        vmin = int(self.cl.get())
-        vmax = int(self.ch.get())
-        gamma = self.gamma.get()
+        self.update()
         self.continous_num.set(str(0))
-        _thread.start_new_thread(self.fram_cap, (Hmask, Vmask, vmin, vmax, gamma, cmap))
+        _thread.start_new_thread(self.fram_cap)
             
-    def fram_cap(self, Hmask, Vmask, vmin, vmax, gamma, cmap):
+    def fram_cap(self):
         print('enter fram cap')
         continous_switch = self.feed_continous.get()
         count = int(self.continous_num.get())
-        x=time.time()
         while continous_switch==True:
             if self.camera_connected.get() == True:
+                FuncAnimation(self.fig, self.take_photo, interval=5, blit=False)
                 self.raw_image = self.camera.photo_capture()
-                img = self.imgproc.quick_image(self.raw_image, Hmask = Hmask, Vmask = Vmask, vmin=vmin, vmax=vmax, gamma = gamma)
-                self.preview = np.uint8(cmap(img/vmax))*vmax
-                image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
-                self.preview_canvas.create_image(0, 0, image=image, anchor=tk.NW)
                 count += 1
                 self.continous_num.set(str(count))
                 continous_switch = self.feed_continous.get()
