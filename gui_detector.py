@@ -41,7 +41,7 @@ class Detector_App:
         # Temporary placeholder photo array and preview array
         self.photo = None
         self.preview = None
-        self.raw_image = np.zeros(1)
+        self.raw_image = None
         self.imgproc = Image()
 
         #Camera parameters
@@ -113,9 +113,8 @@ class Detector_App:
         self.fig, self.ax = plt.subplots(1)
         self.snapshot = FigureCanvasTkAgg(self.fig, self.preview_canvas)
         self.snapshot.get_tk_widget().pack()
-        button = tk.Button(master=self.preview_canvas, text="Quit", command=self._quit)
-        button.pack(side=tk.BOTTOM)
-
+        bye = tk.Button(master=self.preview_canvas, text="Quit", command=self._quit)
+        bye.pack(side=tk.BOTTOM)
         self.im = self.ax.imshow(np.random.rand(1000,1000))
         self.preview_canvas.grid(row=0, column=0, sticky=tk.N)
 
@@ -208,11 +207,13 @@ class Detector_App:
         self.gamma.set(1)
         self.contrast_scale = tk.Scale(self.scale_canvas, from_=1, to=0.01, orient=tk.HORIZONTAL, resolution=0.01)
         self.contrast_scale.set(1)
-        self.contrast_scale.bind("<ButtonRelease-1>", self.change_contrast)
+        # self.contrast_scale.bind("<ButtonRelease-1>", self.change_contrast)
         self.contrast_scale.grid(column=0, row=0)
         self.contrast_label = tk.Label(self.scale_canvas, text='Contrast')
         self.contrast_label.grid(column=0,row=1)
 
+        self.update_button =tk.Button(self.scale_canvas, text='Update', command=self.update)
+        self.update_button.grid(column=0,row=2)
         #add color limits
         self.color_lim_label = tk.Label(self.drop_canvas, text="Color Scale Limits")
         self.cl = tk.StringVar()
@@ -248,6 +249,7 @@ class Detector_App:
         self.ver_lim_label.pack()
         self.ver_low.pack()
         self.ver_high.pack()
+
 
         """___________Saving Options______________________________________"""
         # add snapshot button
@@ -357,12 +359,24 @@ class Detector_App:
             Vmask = (vaxis>int(self.vl.get()))*(vaxis<int(self.vh.get())) 
             self.img = self.imgproc.quick_image(self.raw_image, Hmask = Hmask, Vmask = Vmask, vmin=int(self.cl.get()), vmax=int(self.ch.get()), gamma = self.gamma.get())
             self.ax.clear()
-            self.im = self.ax.imshow(self.img)
+            self.im = self.ax.imshow(self.img, cmap = cmap, aspect='auto')
             self.snapshot.draw()
-            plt.close()
         else:
             print('No Connected Camera')
 
+    def update(self):
+        if self.raw_image != None:
+            cmap = cm.get_cmap(self.chosen_filter.get())
+            haxis = np.arange(self.raw_image.shape[1])
+            vaxis = np.arange(self.raw_image.shape[0])
+            Hmask = (haxis>int(self.hl.get()))*(haxis<int(self.hh.get()))
+            Vmask = (vaxis>int(self.vl.get()))*(vaxis<int(self.vh.get())) 
+            self.img = self.imgproc.quick_image(self.raw_image, Hmask = Hmask, Vmask = Vmask, vmin=int(self.cl.get()), vmax=int(self.ch.get()), gamma = self.gamma.get())
+            self.ax.clear()
+            self.im = self.ax.imshow(self.img, cmap = cmap, aspect='auto')
+            self.snapshot.draw()
+        else:
+            print('Take Picture')
  
     def check_camera(self):
         if self.camera_connected.get() == True:
@@ -414,23 +428,5 @@ class Detector_App:
         else:
             print('No camera connected')
 
-    ########################################################### Processing Function ################# 
-    def change_cmp(self):
-        cmap = cm.get_cmap(self.chosen_filter.get())
-        self.preview = np.uint8(cmap(self.img/int(self.ch.get())))*int(self.ch.get())
-        image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
-        self.preview_canvas.create_image(0, 0, image=image, anchor=tk.NW)
 
-    def change_contrast(self,event):
-        #TODO: fix gamma 
-        self.gamma.set(self.contrast_scale.get())
-        gamma = self.gamma.get()
-        img = self.imgproc.quick_image(self.raw_image, Hmask = Hmask, Vmask = Vmask, vmin=vmin, vmax=vmax, gamma = gamma)
-        if self.photo != None:
-            self.make_preview()
-            self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
-            self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
-
-        else:
-            print('No Picture to Edit')
 
