@@ -374,7 +374,7 @@ class Detector_App:
             Vmask = (vaxis>int(self.vl.get()))*(vaxis<int(self.vh.get())) 
             # self.img = self.imgproc.quick_image(self.raw_image, Hmask = Hmask, Vmask = Vmask, vmin=int(self.cl.get()), vmax=int(self.ch.get()), gamma = self.gamma.get())
             self.ax.clear()
-            self.im = self.ax.imshow(self.img, cmap = cmap, aspect='auto',vmin=int(self.cl.get()), vmax=int(self.ch.get()))
+            self.im = self.ax.imshow(self.img, cmap = cmap, aspect='auto',vmin=float(self.cl.get()), vmax=float(self.ch.get()))
             self.snapshot.draw()
         else:
             print('Take Picture')
