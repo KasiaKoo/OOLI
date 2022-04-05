@@ -106,13 +106,7 @@ class Detector_App:
         self.window.geometry(str(self.xres)+"x"+str(self.yres))
 
         # add a canvas in which image feed and graphs will sit
-        # self.preview_canvas = tk.Canvas(self.window, width=self.res_x+20, height=self.res_y+10)
-        self.preview_canvas = tk.Frame(self.window)
-        self.preview_canvas.grid(row=0, column=0, sticky=tk.N)
-        fig, self.ax = plt.subplots(1)
-        self.bar = FigureCanvasTkAgg(fig, self.preview_canvas)
-        self.bar.get_tk_widget().pack()
-        self.bar.draw()
+        self.preview_canvas = tk.Canvas(self.window, width=self.res_x+20, height=self.res_y+10)
         """________UI Canvases___________________________"""
         # add a canvas in which all the buttons will sit
         self.camera_canvas = tk.Frame(self.window)
@@ -345,12 +339,9 @@ class Detector_App:
             Hmask = (haxis>int(self.hl.get()))*(haxis<int(self.hh.get()))
             Vmask = (vaxis>int(self.vl.get()))*(vaxis<int(self.vh.get())) 
             self.img = self.imgproc.quick_image(self.raw_image, Hmask = Hmask, Vmask = Vmask, vmin=int(self.cl.get()), vmax=int(self.ch.get()), gamma = self.gamma.get())
-            self.ax.imshow(self.img, cmap=cmap)
-            self.bar.draw()
-            self.ax.clear()
-            # self.preview = np.uint8(cmap(self.img/int(self.ch.get())))*int(self.ch.get())
-            # self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
-            # self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
+            self.preview = self.img# np.uint8(cmap(self.img/int(self.ch.get())))*int(self.ch.get())
+            self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
+            self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
         else:
             print('No Connected Camera')
 
