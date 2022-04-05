@@ -116,7 +116,7 @@ class Detector_App:
         bye = tk.Button(master=self.preview_canvas, text="Quit", command=self._quit, bg='red')
         bye.pack(side=tk.BOTTOM)
         self.im = self.ax.imshow(self.raw_image)
-        self.fig.colorbar(self.im, ax =self.ax)
+        self.cb = self.fig.colorbar(self.im, ax =self.ax)
         self.preview_canvas.grid(row=0, column=0, sticky=tk.N)
 
         """________UI Canvases___________________________"""
@@ -359,8 +359,9 @@ class Detector_App:
             Hmask = (haxis>int(self.hl.get()))*(haxis<int(self.hh.get()))
             Vmask = (vaxis>int(self.vl.get()))*(vaxis<int(self.vh.get())) 
             self.img = self.imgproc.quick_image(self.raw_image, Hmask = Hmask, Vmask = Vmask, vmin=float(self.cl.get()), vmax=float(self.ch.get()), gamma = self.gamma.get())
-            self.fig.clear()
+            self.ax.clear()
             self.im = self.ax.imshow(self.img, cmap = cmap, aspect='auto')
+            self.cb.udpate_normal()
             self.snapshot.draw()
         else:
             print('No Connected Camera')
