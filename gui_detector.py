@@ -142,7 +142,7 @@ class Detector_App:
 
         # add button to open camera list json file
 
-        self.camera_checkbox = tk.Checkbutton(self.camera_canvas, text='Connect to Camera', variable = self.camera_connected,command=self.check_camera)
+        self.camera_checkbox = tk.Checkbutton(self.camera_canvas, text='Connect to Camera', variable = self.camera_connected,command=lambda: _thread.start_new_thread(self.check_camera, ()))
         self.camera_checkbox.pack()
 
         # add take picture button
