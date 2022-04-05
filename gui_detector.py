@@ -320,12 +320,12 @@ class Detector_App:
         self.savedir_text.set('Saving to '+self.save_dir)
 
     def take_photo(self):
-        try:
+        if self.camera_connected == True:
             self.raw_image = self.camera.photo_capture()
             self.make_preview()
             self.image = PIL.ImageTk.PhotoImage(image= PIL.Image.fromarray(self.preview))
             self.preview_canvas.create_image(0, 0, image=self.image, anchor=tk.NW)
-        except:
+        else:
             print('No Connected Camera')
 
     def make_preview(self):
