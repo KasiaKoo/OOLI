@@ -113,7 +113,7 @@ class Detector_App:
         self.fig, self.ax = plt.subplots(1)
         self.snapshot = FigureCanvasTkAgg(self.fig, self.preview_canvas)
         self.snapshot.get_tk_widget().pack()
-        button = tk.Button(master=self.preview_canvas, text="Quit", command=self._quit)
+        button = tk.Button(master=self.camera_canvas, text="Quit", command=self._quit)
         button.pack(side=tk.BOTTOM)
 
         self.im = self.ax.imshow(np.random.rand(1000,1000))
