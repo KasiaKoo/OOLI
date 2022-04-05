@@ -23,7 +23,7 @@ class Detector_App:
     
     def __init__(self):
 
-        """OOLI User Interface class
+        """OOLI Usezar Interface class
 
         :param window: tk window object
         :param window_title: Title to display in window
@@ -43,6 +43,7 @@ class Detector_App:
         self.preview = None
         self.raw_image = np.random.rand(1000,1000)
         self.imgproc = Image()
+        self.photo_taken = False
 
         #Camera parameters
         self.camera_connected = tk.BooleanVar()
@@ -116,7 +117,6 @@ class Detector_App:
         bye = tk.Button(master=self.preview_canvas, text="Quit", command=self._quit, bg='red')
         bye.pack(side=tk.BOTTOM)
         self.im = self.ax.imshow(self.raw_image)
-        self.cb = self.fig.colorbar(self.im, ax =self.ax)
         self.preview_canvas.grid(row=0, column=0, sticky=tk.N)
 
         """________UI Canvases___________________________"""
@@ -352,17 +352,20 @@ class Detector_App:
 
     def take_photo(self):
         if self.camera_connected.get() == True:
-            self.raw_image = self.camera.photo_capture()
-            cmap = cm.get_cmap(self.chosen_filter.get())
-            haxis = np.arange(self.raw_image.shape[1])
-            vaxis = np.arange(self.raw_image.shape[0])
-            Hmask = (haxis>int(self.hl.get()))*(haxis<int(self.hh.get()))
-            Vmask = (vaxis>int(self.vl.get()))*(vaxis<int(self.vh.get())) 
-            self.img = self.imgproc.quick_image(self.raw_image, Hmask = Hmask, Vmask = Vmask, vmin=float(self.cl.get()), vmax=float(self.ch.get()), gamma = self.gamma.get())
-            self.ax.clear()
-            self.im = self.ax.imshow(self.img, cmap = cmap, aspect='auto')
-            self.cb = self.fig.colorbar(self.im, ax = self.ax)
-            self.snapshot.draw()
+            if self.photo_taken == False:
+                cmap = cm.get_cmap(self.chosen_filter.get())
+                haxis = np.arange(self.raw_image.shape[1])
+                vaxis = np.arange(self.raw_image.shape[0])
+                Hmask = (haxis>int(self.hl.get()))*(haxis<int(self.hh.get()))
+                Vmask = (vaxis>int(self.vl.get()))*(vaxis<int(self.vh.get())) 
+                self.raw_image = self.camera.photo_capture()
+                self.im = self.ax.imshow(self.raw_image)
+                self.cb = self.fig.colorbar(self.im, ax =self.ax)
+                self.snapshot.draw()
+                self.photo_taken=True
+            else:
+                self.raw_image = self.camera.photo_capture()
+                self.im.set_data(self.raw_image)
         else:
             print('No Connected Camera')
 
