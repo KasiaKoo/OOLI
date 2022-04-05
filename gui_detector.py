@@ -221,7 +221,7 @@ class Detector_App:
         self.cl.set('0')
         self.color_low = tk.Entry(self.drop_canvas, textvariable=self.cl)
         self.ch = tk.StringVar()
-        self.ch.set('255')
+        self.ch.set('1')
         self.color_high = tk.Entry(self.drop_canvas, textvariable=self.ch)
         self.color_lim_label.pack()
         self.color_low.pack()
@@ -375,6 +375,7 @@ class Detector_App:
             # self.img = self.imgproc.quick_image(self.raw_image, Hmask = Hmask, Vmask = Vmask, vmin=int(self.cl.get()), vmax=int(self.ch.get()), gamma = self.gamma.get())
             self.ax.clear()
             self.im = self.ax.imshow(self.img, cmap = cmap, aspect='auto',vmin=float(self.cl.get()), vmax=float(self.ch.get()))
+            self.fig.colorbar(self.im, ax =self.ax)
             self.snapshot.draw()
         else:
             print('Take Picture')
