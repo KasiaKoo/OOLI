@@ -360,9 +360,8 @@ class Detector_App:
             Vmask = (vaxis>int(self.vl.get()))*(vaxis<int(self.vh.get())) 
             self.img = self.imgproc.quick_image(self.raw_image, Hmask = Hmask, Vmask = Vmask, vmin=float(self.cl.get()), vmax=float(self.ch.get()), gamma = self.gamma.get())
             self.ax.clear()
-            # self.im = self.ax.imshow(self.img, cmap = cmap, aspect='auto')
-            self.im.set_data(self.img)
-            self.fig.canvas.flush_events()
+            self.im = self.ax.imshow(self.img, cmap = cmap, aspect='auto')
+            self.cb = self.fig.colorbar(self.im, ax = self.ax)
             self.snapshot.draw()
         else:
             print('No Connected Camera')
