@@ -145,6 +145,7 @@ class Detector_App:
         self.continous_num = tk.StringVar()
         self.continous_num.set('Not set yet')
         self.continous_check = tk.Label(self.camera_canvas, textvariable=self.continous_num)
+        self.continous_check.pack()
 
         # add camera options
         self.exposuretime = tk.IntVar()
