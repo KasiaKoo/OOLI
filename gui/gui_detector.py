@@ -232,7 +232,13 @@ class Detector_App:
         self.color_lim_label.pack()
         self.color_low.pack()
         self.color_high.pack()
-
+        #add color limits
+        self.repeat_label = tk.Label(self.drop_canvas, text="How many repeats?")
+        self.rep = tk.StringVar()
+        self.rep.set('1')
+        self.rep_entry = tk.Entry(self.drop_canvas, textvariable=self.rep)
+        self.repeat_label.pack()
+        self.rep_entry.pack()
         #add Hmask limits
         self.hor_lim_label = tk.Label(self.drop_canvas, text="Horizontal Scale Limits")
         self.hl = tk.StringVar()
@@ -371,6 +377,8 @@ class Detector_App:
                 self.photo_taken=True
             else:
                 self.raw_image = self.camera.photo_capture()
+                for i in range(int(self.rep)-1):
+                    self.raw_image = self.raw_image + self.camera.photo_capture()
                 self.im.set_data(self.raw_image-self.bg_img)
                 self.snapshot.draw()
         else:
