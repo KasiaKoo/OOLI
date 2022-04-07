@@ -377,7 +377,7 @@ class Detector_App:
                 self.photo_taken=True
             else:
                 self.raw_image = self.camera.photo_capture()
-                for i in range(int(self.rep)-1):
+                for i in range(int(self.rep.get())-1):
                     self.raw_image = self.raw_image + self.camera.photo_capture()
                 self.im.set_data(self.raw_image-self.bg_img)
                 self.snapshot.draw()
