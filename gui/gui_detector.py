@@ -45,6 +45,7 @@ class Detector_App:
         self.photo = None
         self.preview = None
         self.raw_image = np.random.rand(1000,1000)
+        self.bg_img = 0
         self.imgproc = Image()
         self.photo_taken = False
 
@@ -150,6 +151,9 @@ class Detector_App:
         # add take picture button
         self.take_photo_button = tk.Button(self.camera_canvas, text='Take Picture', command=lambda: _thread.start_new_thread(self.take_photo, ()))       
         self.take_photo_button.pack()
+
+        self.take_bg_button = tk.Button(self.camera_canvas, text='Take Background', command=lambda: _thread.start_new_thread(self.take_bg, ()))       
+        self.take_bg_button.pack()
         # add button to open camera list json file
 
         self.continous_checkbox = tk.Checkbutton(self.camera_canvas, text='Continous', variable = self.feed_continous,command=self.stream)
@@ -367,10 +371,14 @@ class Detector_App:
                 self.photo_taken=True
             else:
                 self.raw_image = self.camera.photo_capture()
-                self.im.set_data(self.raw_image)
+                self.im.set_data(self.raw_image-self.bg_img)
                 self.snapshot.draw()
         else:
             print('No Connected Camera')
+    def take_bg(self):
+        if self.photo_taken == False:
+            self.take_photo()
+        self.bg_img = self.raw_image
 
     def update(self):
         if type(self.raw_image) != 'NoneType':
