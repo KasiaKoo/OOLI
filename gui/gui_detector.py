@@ -379,7 +379,9 @@ class Detector_App:
         if self.photo_taken == False:
             self.take_photo()
         self.bg_img = self.raw_image
-
+        self.im.set_data(self.raw_image-self.bg_img)
+        self.snapshot.draw()
+        
     def update(self):
         if type(self.raw_image) != 'NoneType':
             cmap = cm.get_cmap(self.chosen_filter.get())
