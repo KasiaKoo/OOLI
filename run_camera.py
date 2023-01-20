@@ -20,17 +20,20 @@ iris.set_position(370)
 y_eV = Oli_conversion(bg.shape[1], 1)
 ver = np.array(range(bg.shape[0]))
 ver_mask = (ver>0)*(ver<bg.shape[0])
-eV_mask = (y_eV<5)*(y_eV>35)
+eV_mask = (y_eV>5)*(y_eV<35)
 y_eV = y_eV[eV_mask]
 ver = ver[ver_mask]
 I = Image()
-
-for i in range(5):
-    fig, ax = plt.subplots(2)
-    img = camera.photo_capture()
-    proc = Image.quick_image(img, bg, 1, eV_mask, ver_mask, vmin, vmax)
-    ax[0].set_title(i)
-    ax[0].contourf(y_eV, ver, proc, aspect = 'auto')
-    ax[1].plot(y_eV, proc.sum(0))
-    plt.close(all)
+img = camera.photo_capture()
+proc = I.quick_image(img, 1, eV_mask, ver_mask, 0, 255)
+plt.imshow(proc)
+plt.imshow()
+#for i in range(5):
+#    fig, ax = plt.subplots(2)
+#    img = camera.photo_capture()
+#    proc = Image.quick_image(img, bg, 1, eV_mask, ver_mask, vmin, vmax)
+#    ax[0].set_title(i)
+#    ax[0].contourf(y_eV, ver, proc, aspect = 'auto')
+#    ax[1].plot(y_eV, proc.sum(0))
+#    plt.close(all)
 

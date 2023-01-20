@@ -1,12 +1,9 @@
 from instrument_control.spectrometer import *
 import matplotlib.pyplot as plt 
 import numpy as np
-from scipy.signal import savgol_filter as sg
 from matplotlib.animation import FuncAnimation
 
 spectrometer = Spectrometer("chamber").initiate()
-tlim = spectrometer.get_timelim()
-spectrometer.set_time(1e6)
 
 def ave_spec(no_rep, spec):
     all_x = []
@@ -19,15 +16,14 @@ def ave_spec(no_rep, spec):
 
 fig, ax = plt.subplots()
 bg_x, bg_y = ave_spec(1, spectrometer)
-line, = ax.semilogy(bg_x,bg_y)
-# ax.set_xlim(530,700)
-ax.set_ylim(1e-6,1e4)
-ax.set_title('Time limits are {}'.format(tlim))
+line, = ax.plot(bg_x,bg_y/max(bg_y))
+#ax.set_xlim(left=200)
+ax.set_ylim(-0.1,1)
+
 
 def update(i):
     x, y = ave_spec(1, spectrometer)
-    line.set_data(x,sg(y-bg_y,51,3))
-    # ax.set_ylim(min(y-bg_y), max(y-bg_y))
+    line.set_data(x,(y-bg_y)/max(y-bg_y))
     return line
 
 ani = FuncAnimation(plt.gcf(), update, frames=range(100), interval=5, blit=False)

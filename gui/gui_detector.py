@@ -322,15 +322,18 @@ class Detector_App:
         """Saves a single image created from original image of current preview """
 
         # image = PIL.Image.fromarray(self.photo)
-        file = filedialog.asksaveasfile(mode="wb", defaultextension=".bmp",initialdir=self.save_dir, filetypes=(("Bitmap File", "*.bmp"),
+        file = filedialog.asksaveasfile(mode="wb", defaultextension=".bmp",initialdir=self.save_dir, filetypes=(("text file", "*.txt"),
                                                                                        ("PNG File", "*.png"),
-                                                                                       ("JPEG File", "*.jpg"),
+                                                                                       ("Numpy Array", "*.npy"),
+                                                                                       ("jpeg file", "*.jpg"),
                                                                                        ("All Files", "*.*")))
         if file:
             if self.save_raw.get()==True:
-                self.image.save(file)
+                np.savetxt(file, self.raw_image) #self.raw_image.save(file)
             if self.save_post.get()==True:
-                plt.savefig(file.split('.')[0] + '_processed.'+ file.split('.')[1])
+                file_name = str(file)
+                print(file.name)
+                np.savetxt(file.name.split('.')[0] + '_withbg.'+ file.name.split('.')[1], self.raw_image-self.bg_img)
             print("Image saved!")
         else:
             print("Could not save image!")

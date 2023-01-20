@@ -51,11 +51,20 @@ class ScanGenerator:
         np.savez(os.path.join(self.save_directory, "index_file.npz"), self.axis_array)
 
 
+    def run_repeats(self, N):
+        for i in tqdm(range(N)):
+
+            # image = Image.fromarray(self.detector.photo_capture().astype(np.uint8))
+            arr_new =  self.detector.photo_capture().astype(np.uint8)
+            filename = os.path.join(self.save_directory, str(i) + ".npy")
+            #image.save(filename)
+            np.save(filename, arr_new)
+            print('Saved', filename)
+
+
     def run_scan(self):
 
         self.make_variable_space()
-        self.output_config()
-
         flat_lists = [[item for sublist in self.stage_list[key] for item in sublist] for key in list(self.stage_list.keys())]
         combinations = list(itertools.product(*flat_lists))
 
@@ -66,7 +75,8 @@ class ScanGenerator:
 
             # move stages
             for j in range(len(stages)):
-                stages[j].set_position(combination[j])
+                if np.round(stages[j].get_position(),1) != np.round(combination[j],1):
+                    stages[j].set_position(combination[j])
 
             # wait for stages to finish and lock stages
             for j in range(len(stages)):
@@ -74,9 +84,11 @@ class ScanGenerator:
                 print(stages[j].get_position())
 
             # take photo
-            image = Image.fromarray(self.detector.photo_capture())
-            filename = os.path.join(self.save_directory, str(i) + ".bmp")
-            image.save(filename)
+            image = Image.fromarray(self.detector.photo_capture().astype(np.uint8))
+            arr_new =  self.detector.photo_capture().astype(np.uint8)
+            filename = os.path.join(self.save_directory, str(i) + ".npy")
+            #image.save(filename)
+            np.save(filename, arr_new)
             print(filename)
 
             # unlock stages

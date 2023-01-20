@@ -17,6 +17,13 @@ class OceanOptics:
         I = self.spec.intensities()
         return wl, I
 
+    def get_timelim(self):
+        tlim = self.spec.integration_time_micros_limits
+        return tlim
+
+    def set_time(self,x):
+        self.spec.integration_time_micros(x)
+
 
 
 

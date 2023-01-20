@@ -11,6 +11,12 @@
 		"Maximum": 45,
 		"Minimum": 0
 	},
+	"Compression": {
+		"Model": "ThorLabs",
+		"Stage Number": 27260754,
+		"Maximum": 6,
+		"Minimum":0
+	},
 	"Pickoff": {
 		"Model": "ThorLabs",
 		"Stage Number": 83820741,
@@ -35,6 +41,12 @@
 		"Stage Number": 0,
 		"Maximum": 10,
 		"Minimum": 0
+	},
+	"HWP": {
+		"Model": "ThorLabs",
+		"Stage Number": 83847344,
+		"Maximum": 65,
+		"Minimum": 15
 	},
 	"Rotation": {
 		"Model": "ThorLabs",
