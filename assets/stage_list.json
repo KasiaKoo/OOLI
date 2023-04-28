@@ -1,5 +1,5 @@
 {
-	"Wedge": {
+	"FROG": {
 		"Model": "ThorLabs",
 		"Stage Number": 83841538,
 		"Maximum": 25,
@@ -14,7 +14,7 @@
 	"Compression": {
 		"Model": "ThorLabs",
 		"Stage Number": 27260754,
-		"Maximum": 6,
+		"Maximum": 10,
 		"Minimum":0
 	},
 	"Pickoff": {
@@ -41,6 +41,12 @@
 		"Stage Number": 0,
 		"Maximum": 10,
 		"Minimum": 0
+	},
+	"ROT": {
+		"Model": "ThorLabs",
+		"Stage Number": 83845481,
+		"Maximum": 0,
+		"Minimum": 360
 	},
 	"HWP": {
 		"Model": "ThorLabs",
