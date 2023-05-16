@@ -6,7 +6,7 @@ from matplotlib.animation import FuncAnimation
 
 spectrometer = Spectrometer("chamber").initiate()
 tlim = spectrometer.get_timelim()
-spectrometer.set_time(1e4)
+spectrometer.set_time(5e4)
 
 def ave_spec(no_rep, spec):
     all_x = []

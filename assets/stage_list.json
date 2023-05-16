@@ -9,7 +9,7 @@
 		"Model": "ThorLabs",
 		"Stage Number": 83858594,
 		"Maximum": 45,
-		"Minimum": 0
+		"Minimum": -12
 	},
 	"Compression": {
 		"Model": "ThorLabs",
@@ -44,7 +44,7 @@
 	},
 	"ROT": {
 		"Model": "ThorLabs",
-		"Stage Number": 83845481,
+		"Stage Number": 83847344,
 		"Maximum": 0,
 		"Minimum": 360
 	},

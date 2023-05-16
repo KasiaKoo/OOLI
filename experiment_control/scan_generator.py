@@ -9,6 +9,7 @@ from tqdm import tqdm
 import csv
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
+from scipy.interpolate import interp2d
 
 class ScanGenerator:
     def __init__(self):
@@ -153,14 +154,20 @@ class ScanGenerator:
 
         print('saved', filename)
         #Saving to image
-        X,Y = np.meshgrid(df['wavelength'].to_numpy(),  df.columns.to_numpy()[1:].astype('float'))
+        wl_nm = df['wavelength'].to_numpy()
+        pos_mm = df.columns.to_numpy()[1:].astype('float') 
+        delay_mm = 2*(pos_mm -pos_mm[0])
+        delay_fs = (delay_mm/3)*1e4
+        X,Y = np.meshgrid(3e5/wl_nm,delay_fs)
 
         df_data = df.drop('wavelength', axis = 1)
         img_arr = df_data.to_numpy()
-        plt.pcolormesh(Y,X, img_arr.T, norm=LogNorm())
+        fig, ax = plt.subplots(2, sharex = True)
+        ax[0].pcolormesh(Y,X, img_arr.T, norm=LogNorm())
+        ax[1].pcolormesh(Y,X, img_arr.T, norm=LogNorm(), shading='gouraud')
+        ax[1].set_xlabel('Time delay [fs]')
+        ax[1].set_ylabel('Frquency [THz]')
         plt.tight_layout()
-        plt.xlabel('Position [mm]')
-        plt.ylabel('Wavelength [nm]')
         plt.savefig(filename_pic)
 
         #saving to text
