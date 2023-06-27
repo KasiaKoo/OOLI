@@ -10,6 +10,7 @@ import csv
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 from scipy.interpolate import interp2d
+import time
 
 class ScanGenerator:
     def __init__(self):
@@ -61,9 +62,10 @@ class ScanGenerator:
     def run_repeats(self, N):
         for i in tqdm(range(N)):
 
+            timestamp = time.strftime("-%Y%m%d-%H%M%S")
             # image = Image.fromarray(self.detector.photo_capture().astype(np.uint8))
             arr_new =  self.detector.photo_capture().astype(np.uint8)
-            filename = os.path.join(self.save_directory, str(i) + ".npy")
+            filename = os.path.join(self.save_directory, str(i)+timestamp +  ".npy")
             #image.save(filename)
             np.save(filename, arr_new)
             print('Saved', filename)
@@ -77,6 +79,7 @@ class ScanGenerator:
 
         stages = list(self.stage_list.keys())
         for i in tqdm(range(len(combinations))):
+            timestamp = time.strftime("-%Y%m%d-%H%M%S")
             
             combination = combinations[i]
 
@@ -93,7 +96,7 @@ class ScanGenerator:
             # take photo
             image = Image.fromarray(self.detector.photo_capture().astype(np.uint8))
             arr_new =  self.detector.photo_capture().astype(np.uint8)
-            filename = os.path.join(self.save_directory, str(i) + ".npy")
+            filename = os.path.join(self.save_directory, str(i)+timestamp + ".npy")
             #image.save(filename)
             np.save(filename, arr_new)
             print(filename)

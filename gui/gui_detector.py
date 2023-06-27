@@ -1,5 +1,6 @@
 # import sys
 # sys.path.append('../')
+
 from instrument_control.camera import Camera
 from data_processing.image_processing import Image
 import tkinter as tk
@@ -18,6 +19,7 @@ from matplotlib.animation import FuncAnimation
 from matplotlib import cm
 import time
 import _thread
+
 
 class Detector_App:
 
@@ -322,19 +324,26 @@ class Detector_App:
         """Saves a single image created from original image of current preview """
 
         # image = PIL.Image.fromarray(self.photo)
-        file = filedialog.asksaveasfile(mode="wb", defaultextension=".bmp",initialdir=self.save_dir, filetypes=(("text file", "*.txt"),
-                                                                                       ("PNG File", "*.png"),
-                                                                                       ("Numpy Array", "*.npy"),
-                                                                                       ("jpeg file", "*.jpg"),
-                                                                                       ("All Files", "*.*")))
-        if file:
-            if self.save_raw.get()==True:
-                np.savetxt(file, self.raw_image) #self.raw_image.save(file)
-            if self.save_post.get()==True:
-                file_name = str(file)
-                print(file.name)
-                np.savetxt(file.name.split('.')[0] + '_withbg.'+ file.name.split('.')[1], self.raw_image-self.bg_img)
-            print("Image saved!")
+        filename = filedialog.asksaveasfilename(defaultextension=".png",initialdir=self.save_dir, filetypes=(("text file", "*.txt"),
+                                                                                       ("PNG File", "*.png")))
+        if filename:
+            timestamp = time.strftime("%Y%m%d-%H%M%S")
+            if '.txt' in filename:
+                if self.save_raw.get()==True:
+                    np.savetxt(filename.split('.')[0] + timestamp + '_raw.'+ filename.split('.')[1], self.raw_image) #self.raw_image.save(file)
+                if self.save_post.get()==True:
+                    print(filename)
+                    np.savetxt(filename.split('.')[0] + timestamp + '_withbg.'+ filename.split('.')[1], self.raw_image-self.bg_img)
+                print("Image saved as txt!")
+            elif '.png' in filename:
+                if self.save_raw.get()==True:
+                    im = PIL.Image.fromarray(self.raw_image)
+                    im.save(filename.split('.')[0] +timestamp + '_raw.'+ filename.split('.')[1])
+                if self.save_post.get()==True:
+                    print(filename)
+                    im = PIL.Image.fromarray(self.raw_image-self.bg_img)
+                    im.save(filename.split('.')[0] +timestamp + '_withbg.'+ filename.split('.')[1])
+                print("Image saved as png!")
         else:
             print("Could not save image!")
    
