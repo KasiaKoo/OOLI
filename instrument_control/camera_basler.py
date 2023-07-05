@@ -66,6 +66,7 @@ class Basler():
         for i in range(repeat):
             photo = photo + self.frame_capture()
         self.camera.StopGrabbing()
+        return photo
 
 
     def close(self):
