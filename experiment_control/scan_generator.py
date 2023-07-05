@@ -71,7 +71,7 @@ class ScanGenerator:
             print('Saved', filename)
 
 
-    def run_scan(self):
+    def run_scan(self, repeat=1):
 
         self.make_variable_space()
         flat_lists = [[item for sublist in self.stage_list[key] for item in sublist] for key in list(self.stage_list.keys())]
@@ -94,8 +94,8 @@ class ScanGenerator:
                 print(stages[j].get_position())
 
             # take photo
-            image = Image.fromarray(self.detector.photo_capture().astype(np.uint8))
-            arr_new =  self.detector.photo_capture().astype(np.uint8)
+            # image = Image.fromarray(self.detector.photo_capture_repeat(repeat).astype(np.uint8))
+            arr_new =  self.detector.photo_capture_repeat(repeat).astype(np.uint8)
             filename = os.path.join(self.save_directory, str(i)+timestamp + ".npy")
             #image.save(filename)
             np.save(filename, arr_new)
