@@ -8,7 +8,7 @@
 	"Lens": {
 		"Model": "ThorLabs",
 		"Stage Number": 83858594,
-		"Maximum": 45,
+		"Maximum": 53,
 		"Minimum": -12
 	},
 	"Compression": {
@@ -51,8 +51,8 @@
 	"HWP": {
 		"Model": "ThorLabs",
 		"Stage Number": 83847344,
-		"Maximum": 65,
-		"Minimum": 15
+		"Maximum": 360,
+		"Minimum": 0
 	},
 	"Rotation": {
 		"Model": "ThorLabs",
