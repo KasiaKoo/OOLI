@@ -64,7 +64,7 @@ class ScanGenerator:
 
             timestamp = time.strftime("-%Y%m%d-%H%M%S")
             # image = Image.fromarray(self.detector.photo_capture().astype(np.uint8))
-            arr_new =  self.detector.photo_capture().astype(np.uint8)
+            arr_new =  self.detector.photo_capture().astype(np.uint16)
             filename = os.path.join(self.save_directory, str(i)+timestamp +  ".npy")
             #image.save(filename)
             np.save(filename, arr_new)
@@ -95,7 +95,7 @@ class ScanGenerator:
 
             # take photo
             # image = Image.fromarray(self.detector.photo_capture_repeat(repeat).astype(np.uint8))
-            arr_new =  self.detector.photo_capture_repeat(repeat).astype(np.uint8)
+            arr_new =  self.detector.photo_capture_repeat(repeat).astype(np.uint16)
             filename = os.path.join(self.save_directory, str(i)+timestamp + ".npy")
             #image.save(filename)
             np.save(filename, arr_new)
