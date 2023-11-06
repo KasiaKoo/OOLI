@@ -6,7 +6,7 @@ class Basler(UniversalCamera):
     Basler camera class
     """
     def __init__(self, name):
-        super.__init__(name)
+        super().__init__(name)
 
     def initialise_camera(self):
         """ This creates self.camera module links to the basler python patch"""
