@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 from scipy.interpolate import interp2d
 import time
+from datetime import datetime
 
 class ScanGenerator:
     def __init__(self):
@@ -64,7 +65,7 @@ class ScanGenerator:
 
             timestamp = time.strftime("-%Y%m%d-%H%M%S")
             # image = Image.fromarray(self.detector.photo_capture().astype(np.uint8))
-            arr_new =  self.detector.photo_capture().astype(np.uint16)
+            arr_new =  self.detector.photo_capture().astype(np.uint8)
             filename = os.path.join(self.save_directory, str(i)+timestamp +  ".npy")
             #image.save(filename)
             np.save(filename, arr_new)
@@ -95,7 +96,7 @@ class ScanGenerator:
 
             # take photo
             # image = Image.fromarray(self.detector.photo_capture_repeat(repeat).astype(np.uint8))
-            arr_new =  self.detector.photo_capture_repeat(repeat).astype(np.uint16)
+            arr_new =  self.detector.photo_capture_repeat(repeat).astype(np.uint8)
             filename = os.path.join(self.save_directory, str(i)+timestamp + ".npy")
             #image.save(filename)
             np.save(filename, arr_new)
@@ -106,7 +107,139 @@ class ScanGenerator:
                 stages[j].disable_lock()
 
 
-    def run_scan_spec(self, no_averaging, lowest_wl= 0, highest_wl = 2000):
+    def run_scan_spec(self, no_averaging=1,repeats=1, lowest_wl= 0, highest_wl = 2000):
+        timestamp = time.strftime("-%Y%m%d-%H%M%S")
+        self.make_variable_space()
+        flat_lists = [[item for sublist in self.stage_list[key] for item in sublist] for key in list(self.stage_list.keys())]
+        combinations = list(itertools.product(*flat_lists))
+
+        stages = list(self.stage_list.keys())
+        data_dict = {}
+        x,y = self.detector.get_spec()
+        mask_wl = (x>lowest_wl)*(x<highest_wl)
+        data_dict['wavelength'] = x[mask_wl]
+        for i in tqdm(range(len(combinations))):
+            
+            combination = combinations[i]
+
+            # move stages
+            for j in range(len(stages)):
+                if np.round(stages[j].get_position(),decimals=4) != np.round(combination[j],decimals=4):
+                    stages[j].set_position(combination[j])
+
+            # wait for stages to finish and lock stages
+            for j in range(len(stages)):
+                stages[j].enable_lock()
+                print(stages[j].get_position())
+
+            # take spectrum
+
+
+            for r in range(repeats):
+                all_y = []
+                for i in range(no_averaging):
+                    x, y= self.detector.get_spec()
+                    all_y.append(y)
+                spec = np.mean(np.array(all_y),axis=0)
+                data_dict['{}_{}'.format(np.round(stages[j].get_position(), decimals=6), r)] = spec[mask_wl]
+		
+            # unlock stages
+            for j in range(len(stages)):
+                stages[j].disable_lock()
+
+
+        #Saving to csv
+        filename = os.path.join(self.save_directory, "data_{}.csv".format(timestamp))
+        #filename_pic = os.path.join(self.save_directory, "trace.png")
+        #filename_txt = os.path.join(self.save_directory, 'trace_info.txt')
+        df = pd.DataFrame.from_dict(data_dict)
+        df.to_csv(filename)
+
+        #print('saved', filename)
+        ##Saving to image
+        #wl_nm = df['wavelength'].to_numpy()
+        #pos_mm = df.columns.to_numpy()[1:].astype('float') 
+        #delay_mm = 2*(pos_mm -pos_mm[0])
+        #delay_fs = (delay_mm/3)*1e4
+        #X,Y = np.meshgrid(3e5/wl_nm,delay_fs)
+
+        #df_data = df.drop('wavelength', axis = 1)
+        #img_arr = df_data.to_numpy()
+        #fig, ax = plt.subplots(2, sharex = True)
+        #ax[0].pcolormesh(Y,X, img_arr.T, norm=LogNorm())
+        #ax[1].pcolormesh(Y,X, img_arr.T, norm=LogNorm(), shading='gouraud')
+        #ax[1].set_xlabel('Time delay [fs]')
+        #ax[1].set_ylabel('Frquency [THz]')
+        #plt.tight_layout()
+        #plt.savefig(filename_pic)
+
+        #saving to text
+        #np.savetxt(filename_txt, img_arr.T, delimiter='\t')
+        #wl = df['wavelength'].to_numpy()
+        #steps = df_data.columns.to_numpy().astype('float')
+        #no_points = len(steps)
+        #no_wl = len(wl)
+        #delay_increment_mm = 2*(steps[1]-steps[0])
+        #delay_increment_fs = (delay_increment_mm*1e-3/3e8)*1e15
+        #wl_increment_nm = wl[1]-wl[0]
+        #middle_wl = wl[len(wl)//2]
+        #first_line = '{}\t{}\t{}\t{}\t{}'.format(no_points, no_wl, delay_increment_fs, wl_increment_nm, middle_wl)
+        #with open(filename_txt, 'r+') as f:
+            #content = f.read()
+            #f.seek(0, 0)
+            #f.write(first_line.rstrip('\r\n') + '\n' + content)
+
+    def run_scan_spec_seperatedelays(self, no_averaging=1,repeats=1, lowest_wl= 0, highest_wl = 2000):
+        
+        self.make_variable_space()
+        flat_lists = [[item for sublist in self.stage_list[key] for item in sublist] for key in list(self.stage_list.keys())]
+        combinations = list(itertools.product(*flat_lists))
+
+        stages = list(self.stage_list.keys())
+
+        x,y = self.detector.get_spec()
+        mask_wl = (x>lowest_wl)*(x<highest_wl)
+        
+        for i in tqdm(range(len(combinations))):
+         
+            combination = combinations[i]
+            data_dict = {}
+            data_dict['wavelength'] = x[mask_wl]
+
+            # move stages
+            for j in range(len(stages)):
+                if np.round(stages[j].get_position(),decimals=4) != np.round(combination[j],decimals=4):
+                    stages[j].set_position(combination[j])
+
+            # wait for stages to finish and lock stages
+            for j in range(len(stages)):
+                stages[j].enable_lock()
+                print(stages[j].get_position())
+
+            # take spectrum
+
+
+            for r in range(repeats):
+                all_y = []
+                for av in range(no_averaging):
+                    x, y= self.detector.get_spec()
+                    all_y.append(y)
+                spec = np.mean(np.array(all_y),axis=0)
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S.%f")
+                data_dict['{}_{}'.format(r,timestamp)] = spec[mask_wl]
+
+		
+            # unlock stages
+            for j in range(len(stages)):
+                stages[j].disable_lock()
+
+
+            #Saving to csv
+            filename = os.path.join(self.save_directory, "data_{}.csv".format(np.round(stages[j].get_position(), decimals=6)))
+            df = pd.DataFrame.from_dict(data_dict)
+            df.to_csv(filename)
+
+    def run_scan_FROG(self, no_averaging, lowest_wl= 0, highest_wl = 2000):
 
         self.make_variable_space()
         flat_lists = [[item for sublist in self.stage_list[key] for item in sublist] for key in list(self.stage_list.keys())]
@@ -188,4 +321,3 @@ class ScanGenerator:
             content = f.read()
             f.seek(0, 0)
             f.write(first_line.rstrip('\r\n') + '\n' + content)
-

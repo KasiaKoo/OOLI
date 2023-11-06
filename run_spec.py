@@ -6,7 +6,7 @@ from matplotlib.animation import FuncAnimation
 
 spectrometer = Spectrometer("chamber").initiate()
 tlim = spectrometer.get_timelim()
-spectrometer.set_time(5e4)
+spectrometer.set_time(1e5)
 
 def ave_spec(no_rep, spec):
     all_x = []
@@ -19,19 +19,19 @@ def ave_spec(no_rep, spec):
 
 fig, ax = plt.subplots()
 bg_x, bg_y = ave_spec(1, spectrometer)
-np.savetxt('spectrum_test_wl.txt', bg_x)
-np.savetxt('spectrum_test_yield.txt', bg_y)
+#np.savetxt('spectrum_test_wl.txt', bg_x)
+#np.savetxt('spectrum_test_yield.txt', bg_y)
 # line, = ax.plot(bg_x,bg_y)
-line, = ax.semilogy(bg_x,bg_y)
-# ax.set_xlim(530,700)
-ax.set_ylim(1,1e6)
+line, = ax.plot(bg_x,bg_y)
+ax.set_xlim(350,900)
+#ax.set_ylim(1,1e3)
 ax.set_title('Time limits are {}'.format(tlim))
 count= 0 
 def update(i):
     x, y = ave_spec(1, spectrometer)
-    y = y-bg_y
+    y = y#-bg_y
     line.set_data(x,sg(y,51,3))
-    # ax.set_ylim(min(y-bg_y), max(y-bg_y))
+    ax.set_ylim(min(sg(y,51,3)), max(sg(y,51,3)))
     return line
 
 ani = FuncAnimation(plt.gcf(), update, frames=range(100), interval=5, blit=False)

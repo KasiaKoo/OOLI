@@ -18,7 +18,7 @@ scan = ScanGenerator() #initialising an object
 scan.set_detector(spectrometer) #setting detector
 
 # Setting save directiory - first path is where you want to save it, second is the name of the folder you want the scan to be named
-scan.set_save_directory("C:\\Users\\CLI\\OneDrive - Imperial College London (1)\\PhD\\09 Lab\Rose\Chiral LJ Work\\Chiral SHG\Raw data\\06.10.23", "Phase scan")
+scan.set_save_directory("C:\\Users\\CLI\\OneDrive - Imperial College London\\PhD\\09 Lab\\Rose\\Chiral LJ Work\\Chiral SHG\\Raw data\\31.10.23", "Left_2w_beam_fluctuations")
 
 # Adding axis to the scan - you can add as many as you want but top one is done last. 
 
@@ -26,8 +26,8 @@ scan.set_save_directory("C:\\Users\\CLI\\OneDrive - Imperial College London (1)\
 m_init = wedge_stage.get_position() #getting the position you have now on the stage
 print(m_init)
 
-m_range = 8.0 #range in mm which you want to move on both sides
-m_step_size = 0.25 #size of the step in mm 
+m_range = 0.04 #range in mm which you want to move on both sides
+m_step_size = 0.0003 #size of the step in mm 
 #m_step_count = 400 #how many steps you need 
 
 # adding axis first is the stage you're trying to add, second is the array you are adding 

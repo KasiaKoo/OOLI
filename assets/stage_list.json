@@ -1,4 +1,18 @@
-{
+{	
+	
+	"MirrorDelay": {
+		"Model": "ThorLabs",
+		"Stage Number": 83855004,
+		"Maximum": 50,
+		"Minimum": -50
+	},
+	
+	"WedgeDelay": {
+		"Model": "ThorLabs",
+		"Stage Number": 83823240,
+		"Maximum": 50,
+		"Minimum": -50
+	},	
 	"FROG": {
 		"Model": "ThorLabs",
 		"Stage Number": 83841538,
@@ -8,7 +22,7 @@
 	"Lens": {
 		"Model": "ThorLabs",
 		"Stage Number": 83858594,
-		"Maximum": 53,
+		"Maximum": 45,
 		"Minimum": -12
 	},
 	"Compression": {
@@ -51,8 +65,8 @@
 	"HWP": {
 		"Model": "ThorLabs",
 		"Stage Number": 83847344,
-		"Maximum": 360,
-		"Minimum": 0
+		"Maximum": 65,
+		"Minimum": 15
 	},
 	"Rotation": {
 		"Model": "ThorLabs",
