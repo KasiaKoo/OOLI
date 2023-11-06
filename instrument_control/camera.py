@@ -15,7 +15,7 @@ class Camera:
         if self.model == "Basler":
             return Basler(self.name)
         else:
-            return Exception('Class for this model not defined')
+            raise Exception('Class for this model not defined')
 
     def get_model(self, camera_list):
         with open(camera_list) as f:
