@@ -1,5 +1,5 @@
 from pypylon import pylon
-from camera_universal import UniversalCamera
+from instrument_control.camera_universal import UniversalCamera
 
 class Basler(UniversalCamera):
     """
