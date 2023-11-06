@@ -5,6 +5,12 @@
 		"Maximum": 25,
 		"Minimum": 0
 	},
+	"Wedge": {
+		"Model": "ThorLabs",
+		"Stage Number": 83840806,
+		"Maximum": 26,
+		"Minimum": -5
+	},
 	"Lens": {
 		"Model": "ThorLabs",
 		"Stage Number": 83858594,
@@ -25,9 +31,9 @@
 	},
 	"Iris": {
 		"Model": "ThorLabs",
-		"Stage Number": 27259277,
-		"Maximum": 380,
-		"Minimum": 300
+		"Stage Number": 83846012,
+		"Maximum": 0,
+		"Minimum": 360
 	},
 	"Filter Wheel": {
 		"Model": "ThorLabs",

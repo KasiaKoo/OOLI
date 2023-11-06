@@ -59,19 +59,29 @@ class ScanGenerator:
 
 
 
-    def run_repeats(self, N):
+    def run_repeats(self, N,lims=None, save = 'npy'):
         for i in tqdm(range(N)):
 
             timestamp = time.strftime("-%Y%m%d-%H%M%S")
             # image = Image.fromarray(self.detector.photo_capture().astype(np.uint8))
-            arr_new =  self.detector.photo_capture().astype(np.uint16)
-            filename = os.path.join(self.save_directory, str(i)+timestamp +  ".npy")
-            #image.save(filename)
-            np.save(filename, arr_new)
-            print('Saved', filename)
+            if lims==None:
+                arr_new =  self.detector.photo_capture().astype(np.uint8)
+            else:
+                arr_new =  self.detector.photo_capture().astype(np.uint8)[lims[0]:lims[1],lims[2]:lims[3]]
 
+            if save=='npy':
+                filename = os.path.join(self.save_directory, str(i)+timestamp +  ".npy")
+                #image.save(filename)
+                np.save(filename, arr_new)
+                print('Saved', filename)
 
-    def run_scan(self, repeat=1):
+            elif save=='png':
+                filename = os.path.join(self.save_directory, str(i)+timestamp +  ".png")
+                im = Image.fromarray(arr_new)
+                im.save(filename, dpi=(300,300))
+                print('Saved', filename)
+
+    def run_scan(self, repeat=1,lims=None):
 
         self.make_variable_space()
         flat_lists = [[item for sublist in self.stage_list[key] for item in sublist] for key in list(self.stage_list.keys())]
@@ -95,7 +105,10 @@ class ScanGenerator:
 
             # take photo
             # image = Image.fromarray(self.detector.photo_capture_repeat(repeat).astype(np.uint8))
-            arr_new =  self.detector.photo_capture_repeat(repeat).astype(np.uint16)
+            if lims==None:
+                arr_new =  self.detector.photo_capture_repeat(repeat).astype(np.uint8)
+            else:
+                arr_new =  self.detector.photo_capture_repeat(repeat).astype(np.uint8)[lims[0]:lims[1],lims[2]:lims[3]]
             filename = os.path.join(self.save_directory, str(i)+timestamp + ".npy")
             #image.save(filename)
             np.save(filename, arr_new)

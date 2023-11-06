@@ -15,7 +15,7 @@ class Stage:
             stage = ThorLabsStage(self.name, self.stage_number)
 
         elif self.model == "SmarAct":
-            pass
+            stage = SmarActLabsStage(self.name, self.stage_number)
 
         stage.set_position_limits(self.lower, self.upper)
         return stage
