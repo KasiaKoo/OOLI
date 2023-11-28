@@ -3,6 +3,10 @@
 		"Model": "Basler",
 		"Serial Number": 0
 	},
+	"UV Camera": {
+		"Model": "ArtCam",
+		"Serial Number": 0
+	},
 	"Beam Image": {
 		"Model": "Webcam",
 		"Serial Number": 0

@@ -1,5 +1,5 @@
 from instrument_control.stage_thorlabs import ThorLabsStage
-from instrument_control.stage_thorlabs import SmarActLabsStage
+#from instrument_control.stage_thorlabs import SmarActLabsStage
 import json
 
 class Stage:

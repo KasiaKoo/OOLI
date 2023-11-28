@@ -1,10 +1,18 @@
 from instrument_control.camera import *
-from instrument_control.stage import *
-from data_processing.image_processing import *
+# from instrument_control.stage import *
+# from data_processing.image_processing import *
 import matplotlib.pyplot as plt 
 import numpy as np
 
-camera = Camera("Solid HHG Detector").initiate()
+camera = Camera("UV Camera").initiate()
+
+im = camera.photo_capture()
+
+plt.imshow(im, vmax = 100)
+plt.colorbar()
+plt.show()
+
+"""
 iris = Stage("Iris").initiate()
 camera.set_exposure(1000000)
 camera.set_gain(27)
@@ -37,3 +45,4 @@ plt.imshow()
 #    ax[1].plot(y_eV, proc.sum(0))
 #    plt.close(all)
 
+"""

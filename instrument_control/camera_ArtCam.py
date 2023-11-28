@@ -1,4 +1,5 @@
 import ctypes as ct
+import os
 import numpy as np
 from instrument_control.camera_universal import UniversalCamera
 
@@ -26,7 +27,12 @@ class ArtCam(UniversalCamera):
     
     def initialise_camera(self):
         """ This opens the library module that python communicates with the camera"""
-        self.library = ct.windll.LoadLibrary(r'dll\ArtCamSdk_407UV_WOM.dll')
+        #path to dll - specific to you 
+        path = os.path.join(r'C:\\Users\\reddragon\\Downloads\\ArtCamSdk_407UV_WOM_x64_v1315', 'ArtCamSdk_407UV_WOM.dll')
+        if os.path.isfile(path):
+            self.library = ct.windll.LoadLibrary(path)
+        else:
+            raise Exception('No DLL found - download and point to path')
         self.CamID = self.library.ArtCam_Initialize()
         # Lastly we will set the bit format of the image to be monochrome and 16 bits
         self.library.ArtCam_SetColorMode(self.CamID, ct.c_long(16))
@@ -58,7 +64,7 @@ class ArtCam(UniversalCamera):
 
 
     def get_gain(self):
-        return self.library.ArtCam_GetGlobalGain(self.CamID, ct.c_bool(0))
+        return self.library.ArtCam_GetGlobalGain(self.CamID, ct.c_bool(False))
 
 
     def set_exposure(self, new_value):
@@ -81,15 +87,25 @@ class ArtCam(UniversalCamera):
         dwBufferSize = im_height*im_width 
 
         #Create an empty array
-        grab_arr = np.zeros((im_height, im_width), dtype=np.uint16) #dtype should match the one set in intialisation
+        grab_arr = np.zeros((im_height, im_width), dtype=np.int16) #dtype should match the one set in intialisation
 
         #Get the Image 
-        self.library.ArtCam_SnapShot(self.CamID, grab_arr.ctypes.data_as(ct.POINTER(ct.c_int16)), ct.c_long(dwBufferSize*2),0)
+        success =self.library.ArtCam_SnapShot(self.CamID, grab_arr.ctypes.data_as(ct.POINTER(ct.c_int16)), ct.c_long(dwBufferSize*2),0)
+        if success == 0:
+            print(self.library.GetLastError(self.CamID))
+            raise Exception('Failed to take picture')
+        else:
+           pass 
         return grab_arr
 
     def start_grab(self):
-        self.library.ArtCam_Capture(self.CamID)
-    
+        success = self.library.ArtCam_Capture(self.CamID)
+        if success == 0:
+            print(self.library.GetLastError(self.CamID))
+            raise Exception('Failed to take start capture')
+        else:
+            pass 
+
     def stop_grab(self):
         self.library.ArtCam_Close(self.CamID)
 
@@ -98,3 +114,8 @@ class ArtCam(UniversalCamera):
         # https://artray.co.jp/wp-content/uploads/2022/07/INTRDUCTION_ARTCAM-407UV-WOM_220425_V102.pdf
         return ((1074-ss)*1790+424)*0.042
 
+    def photo_capture(self):
+        self.start_grab()
+        photo = self.frame_capture()
+        self.stop_grab()
+        return photo
