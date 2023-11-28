@@ -1,22 +1,23 @@
 from pypylon import pylon
+from instrument_control.camera_universal import UniversalCamera
 
-class Basler():
+class Basler(UniversalCamera):
     """
     Basler camera class
     """
     def __init__(self, name):
+        super().__init__(name)
 
-        # open camera
+    def initialise_camera(self):
+        """ This creates self.camera module links to the basler python patch"""
         # TODO: generalise to multiple basler cameras
         self.camera = pylon.InstantCamera(pylon.TlFactory.GetInstance().CreateFirstDevice())
+    
+    def open(self):
         self.camera.Open()
 
-        self.name = name
-        self.exposure = self.get_exposure()
-        self.gain = self.get_gain()
-        self.gain_lower, self.gain_upper = self.get_gain_limits()
-        self.exposure_lower, self.exposure_upper = self.get_exposure_limits()
-
+    def close(self):
+        self.camera.Close()
 
     def get_exposure(self):
         return self.camera.ExposureTime.GetValue()
@@ -53,21 +54,9 @@ class Basler():
         img = grab_result.Array.astype(int)
         return img
 
-
-    def photo_capture(self):
+    def start_grab(self):
         self.camera.StartGrabbing()
-        photo = self.frame_capture()
+    
+    def stop_grab(self):
         self.camera.StopGrabbing()
-        return photo
 
-    def photo_capture_repeat(self, repeat=1):
-        self.camera.StartGrabbing()
-        photo = 0
-        for i in range(repeat):
-            photo = photo + self.frame_capture()
-        self.camera.StopGrabbing()
-        return photo
-
-
-    def close(self):
-        self.camera.Close()

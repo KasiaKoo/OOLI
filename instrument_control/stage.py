@@ -1,4 +1,5 @@
 from instrument_control.stage_thorlabs import ThorLabsStage
+#from instrument_control.stage_thorlabs import SmarActLabsStage
 import json
 
 class Stage:
@@ -16,6 +17,8 @@ class Stage:
 
         elif self.model == "SmarAct":
             stage = SmarActLabsStage(self.name, self.stage_number)
+        else:
+            raise Exception('Class for this model not defined')
 
         stage.set_position_limits(self.lower, self.upper)
         return stage

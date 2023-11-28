@@ -1,7 +1,4 @@
-import thorlabs_apt as apt
-import time
-
-class ThorLabsStage():
+class SmarActiLabsStage():
     """
     Stages from ThorLabs class
     """
