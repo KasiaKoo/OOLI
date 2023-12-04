@@ -11,6 +11,7 @@ class UniversalCamera():
         self.gain = self.get_gain()
         self.gain_lower, self.gain_upper = self.get_gain_limits()
         self.exposure_lower, self.exposure_upper = self.get_exposure_limits()
+        fdsjlkdsfj§
     
 
     # Following methods have to be overritten for specific cameras

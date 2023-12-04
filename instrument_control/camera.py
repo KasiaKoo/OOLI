@@ -1,5 +1,7 @@
 from instrument_control.camera_basler import Basler
 from instrument_control.camera_ArtCam import ArtCam
+from instrument_control.camera_vmb import VMB
+
 import json
 
 class Camera:
@@ -15,8 +17,10 @@ class Camera:
     def initiate(self):
         if self.model == "Basler":
             return Basler(self.name)
-        if self.model == "ArtCam":
+        elif self.model == "ArtCam":
             return ArtCam(self.name)
+        elif self.model == "VMB":
+            return VMB(self.name)
         else:
             raise Exception('Class for this model not defined')
 
