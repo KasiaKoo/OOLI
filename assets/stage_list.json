@@ -65,5 +65,11 @@
 		"Stage Number": 0,
 		"Maximum": 10,
 		"Minimum": 0
+	},
+	"HWP007": {
+		"Model": "ThorLabs",
+		"Stage Number": 27266120,
+		"Maximum": 360,
+		"Minimum": 0
 	}
 }

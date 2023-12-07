@@ -5,39 +5,39 @@ class VMB(UniversalCamera):
     """
     VMB camera class
     """
-    def __init__(self, name):
-        super().__init__(name)
+    def __init__(self, name, id):
+        super().__init__(name, id)
+
 
     def initialise_camera(self):
-        # Try to generalise to multiple cameras - find id or something
-        with vmbpy.VmbSystem.get_instance() as vmb:
-            cams = vmb.get_all_cameras()
-            if not cams:
-                print('No valid camera plugged in')
-        #As only single camera is available its the first one
-        self.camera = cams[0] 
+        self.vmb = vmbpy.VmbSystem.get_instance()
+        self.vmb._startup()
+        self.camera=self.vmb.get_camera_by_id(self.id)
+
 
     def open(self):
-        self.camera.Open()
+        self.camera._open()
 
     def close(self):
-        self.camera.Close()
+        self.camera._close()
+        self.vmb._shutdown()
+        print('closed the camera')
+
 
     def get_exposure(self):
-        return self.camera.ExposureTimeAbs()
+        # exposure in us
+        return self.camera.ExposureTimeAbs.get()
 
 
     def get_exposure_limits(self):
-        # Not sure have to check on comp
-        lower = 0 #self.camera.ExposureTimeAbs.GetMin()
-        upper = 100# self.camera.ExposureTimeAbs.GetMax()
+        lower = self.camera.ExposureTimeAbs.get_range()[0]
+        upper = self.camera.ExposureTimeAbs.get_range()[1]
         return lower, upper
 
 
     def get_gain_limits(self):
-        #Not Sure have to check on the comp
-        lower = 0 #self.camera.Gain.GetMin()
-        upper = 1000 #self.camera.Gain.GetMax()
+        lower = self.camera.Gain.get_range()[0]
+        upper = self.camera.Gain.get_range()[1]
         return lower, upper
 
 
@@ -57,18 +57,14 @@ class VMB(UniversalCamera):
 
 
     def frame_capture(self):
-        grab_result = self.camera.get_frame()
-        grab_result.convert_pixel_format(PixelFormat.Mono8)
+        grab_result = self.camera.get_frame(timeout_ms = int(self.exposure*1.2*1e-3))
+        grab_result.convert_pixel_format(vmbpy.PixelFormat.Mono8)
         img = grab_result.as_numpy_ndarray()
         return img
 
     def start_grab(self):
-        #no way to initialise there is _shutdown and _startup but not sure
         pass
-        # self.camera.StartGrabbing()
     
     def stop_grab(self):
-        #no way to initialise there is _shutdown and _startup but not sure
         pass
-        # self.camera.StopGrabbing()
 

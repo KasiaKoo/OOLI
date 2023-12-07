@@ -2,9 +2,10 @@ class UniversalCamera():
     """ Universal Class for Camera which is the parent to all specific models. 
     All methods with 'Still using Universal' require change for specific cameras."""
 
-    def __init__(self, name):
+    def __init__(self, name, id):
 
         self.name = name
+        self.id = id
         self.initialise_camera()
         self.open()
         self.exposure = self.get_exposure()

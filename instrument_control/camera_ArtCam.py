@@ -10,7 +10,7 @@ class ArtCam(UniversalCamera):
 
     This is quick and dirty way of using dll directly in python to access a sensor
     """
-    def __init__(self, name):
+    def __init__(self, name, id):
         #Camera specific values - could be generalised to different ArtCams 
         self.ss_lower = 7
         self.ss_upper = 1074
@@ -22,7 +22,7 @@ class ArtCam(UniversalCamera):
         self.pixSize_V = 4.65 #micrometers
 
         #Initialising parent function
-        super().__init__(name)
+        super().__init__(name, id)
 
     
     def initialise_camera(self):

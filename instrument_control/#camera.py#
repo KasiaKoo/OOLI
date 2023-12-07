@@ -11,17 +11,16 @@ class Camera:
     def __init__(self, name):
 
         self.name = name
-        self.id = self.get_SN("assets/camera_list.json")
         self.model = self.get_model("assets/camera_list.json")
 
 
     def initiate(self):
         if self.model == "Basler":
-            return Basler(self.name, self.id)
+            return Basler(self.name)
         elif self.model == "ArtCam":
-            return ArtCam(self.name, seld.id)
+            return ArtCam(self.name)
         elif self.model == "VMB":
-            return VMB(self.name, self.id)
+            return VMB(self.name)
         else:
             raise Exception('Class for this model not defined')
 
@@ -30,7 +29,4 @@ class Camera:
             camera_dict = json.load(f)
         return camera_dict[self.name]["Model"]
 
-    def get_SN(self, camera_list):
-        with open(camera_list) as f:
-            camera_dict = json.load(f)
-        return camera_dict[self.name]["Serial Number"]
+
